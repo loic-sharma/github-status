@@ -5,13 +5,18 @@ import 'package:gh_status/github.dart' as github;
 import 'package:gh_status/logic.dart';
 import 'package:gh_status/primer.dart' as primer;
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
+
+import 'src/logic/timeago.dart';
 
 const client = github.GitHub(token: 'TODO');
 
 YoursModel yours = createYoursModel(client);
 
 void main() async {
+  registerTimeago();
+
   runApp(const MyApp());
 }
 
@@ -233,11 +238,13 @@ class IssueList extends StatelessWidget {
           DataValue(: var value) => [
             for (final item in value.items) ...[
               IssueTile(
+                authorAvatarUri: item.authorAvatarUri,
                 isDraft: item.isDraft,
                 reviewDecision: item.reviewDecision,
                 state: item.state,
                 title: item.title,
                 type: item.type,
+                updatedAt: item.updatedAt,
                 uri: item.uri,
               ),
               const SizedBox(height: 4.0),
@@ -252,19 +259,23 @@ class IssueList extends StatelessWidget {
 class IssueTile extends StatelessWidget {
   const IssueTile({
     super.key,
+    required this.authorAvatarUri,
     required this.isDraft,
     required this.reviewDecision,
     required this.state,
     required this.title,
     required this.type,
+    required this.updatedAt,
     required this.uri,
   });
 
+  final Uri authorAvatarUri;
   final bool isDraft;
   final github.ReviewDecision? reviewDecision;
   final github.ItemState state;
   final String title;
   final github.ItemType type;
+  final DateTime updatedAt;
   final Uri uri;
 
   @override
@@ -274,7 +285,7 @@ class IssueTile extends StatelessWidget {
     return Row(
       children: [
         AvatarIcon(
-          iconUri: Uri.parse('https://avatars.githubusercontent.com/u/737941?v=4'),
+          iconUri: authorAvatarUri,
           userUri: uri,
         ),
 
@@ -326,7 +337,7 @@ class IssueTile extends StatelessWidget {
         Link(
           uri: uri,
           child: Text(
-            '5m',
+            timeago.format(updatedAt),
             style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
           ),
         ),

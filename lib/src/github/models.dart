@@ -50,6 +50,7 @@ sealed class SearchResultIssueOrPullRequest {
 
 class SearchResultPullRequest extends SearchResultIssueOrPullRequest {
   const SearchResultPullRequest({
+    required this.authorAvatarUrl,
     required this.authorLogin,
     required this.isDraft,
     required this.number,
@@ -62,6 +63,7 @@ class SearchResultPullRequest extends SearchResultIssueOrPullRequest {
     required this.url,
   });
 
+  final Uri authorAvatarUrl;
   final String authorLogin;
   final bool isDraft;
   final int number;
@@ -81,6 +83,7 @@ class SearchResultPullRequest extends SearchResultIssueOrPullRequest {
     final reviewDecision = json['reviewDecision'] as String?;
 
     return SearchResultPullRequest(
+      authorAvatarUrl: Uri.parse(json['author']['avatarUrl']),
       authorLogin: json['author']['login'],
       isDraft: json['isDraft'],
       number: json['number'],

@@ -46,12 +46,14 @@ Future<void> _searchIssues(
     for (final item in data.items) {
       items.add(switch (item) {
         github.SearchResultPullRequest pull => IssueSearchItemModel(
+          authorAvatarUri: pull.authorAvatarUrl,
           isDraft: pull.isDraft,
           lastUpdated: pull.updatedAt,
           reviewDecision: pull.reviewDecision,
           state: pull.state,
           title: pull.title,
           type: github.ItemType.pullRequest,
+          updatedAt: pull.updatedAt,
           uri: pull.url,
         ),
         _ => throw 'Invalid type ${item.runtimeType}',

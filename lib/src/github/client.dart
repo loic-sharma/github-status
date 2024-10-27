@@ -172,6 +172,7 @@ fragment IssueOrPullRequestFields on IssueOrPullRequest {
     updatedAt
     url
     author {
+      avatarUrl
       login
     }
     repository {
@@ -185,6 +186,7 @@ fragment IssueOrPullRequestFields on IssueOrPullRequest {
     updatedAt
     url
     author {
+      avatarUrl
       login
     }
     repository {

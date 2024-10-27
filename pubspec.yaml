@@ -39,6 +39,7 @@ dependencies:
   flutter_octicons: ^1.46.0
   url_launcher: ^6.3.1
   http: ^1.2.2
+  timeago: ^3.7.0
 
 dev_dependencies:
   flutter_test:

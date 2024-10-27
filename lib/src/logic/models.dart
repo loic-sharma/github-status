@@ -39,20 +39,24 @@ class IssueSearchModel {
 
 class IssueSearchItemModel {
   IssueSearchItemModel({
+    required this.authorAvatarUri,
     required this.isDraft,
     required this.lastUpdated,
     required this.reviewDecision,
     required this.state,
     required this.title,
     required this.type,
+    required this.updatedAt,
     required this.uri,
   });
 
+  final Uri authorAvatarUri;
   final bool isDraft;
   final DateTime lastUpdated;
   final github.ReviewDecision? reviewDecision;
   final github.ItemState state;
   final String title;
   final github.ItemType type;
+  final DateTime updatedAt;
   final Uri uri;
 }
