@@ -319,11 +319,11 @@ class IssueTile extends StatelessWidget {
           Link(
             uri: uri,
             child: switch (reviewDecision) {
-              github.ReviewDecision.approved => primer.IssueLabel(
+              github.ReviewDecision.approved => const primer.IssueLabel(
                 name: 'Approved',
                 color: primer.Colors.openForeground,
               ),
-              github.ReviewDecision.changesRequested => primer.IssueLabel(
+              github.ReviewDecision.changesRequested => const primer.IssueLabel(
                 name: 'Changes requested',
                 color: primer.Colors.closedForeground,
               ),
@@ -337,6 +337,7 @@ class IssueTile extends StatelessWidget {
         Link(
           uri: uri,
           child: Text(
+            // TODO: Format using "Now", 5m, 3h, 3d, 3mo, 3y, etc..
             timeago.format(updatedAt),
             style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
           ),
