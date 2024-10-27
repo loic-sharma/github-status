@@ -51,41 +51,46 @@ sealed class SearchResultIssueOrPullRequest {
 class SearchResultPullRequest extends SearchResultIssueOrPullRequest {
   const SearchResultPullRequest({
     required this.authorLogin,
-    required this.number,
     required this.isDraft,
+    required this.number,
     required this.repositoryNameWithOwner,
     required this.reviewDecision,
     required this.state,
     required this.title,
     required this.totalCommentsCount,
     required this.updatedAt,
+    required this.url,
   });
 
   final String authorLogin;
-  final int number;
   final bool isDraft;
+  final int number;
   final String repositoryNameWithOwner;
-  final ReviewDecision reviewDecision;
+  final ReviewDecision? reviewDecision;
   final ItemState state;
   final String title;
   final int totalCommentsCount;
   final DateTime updatedAt;
+  final Uri url;
 
   factory SearchResultPullRequest.fromJson(Map<String, dynamic> json) {
     assert(json['__typename'] == 'PullRequest');
     assert(json.containsKey('author'));
     assert(json.containsKey('repository'));
 
+    final reviewDecision = json['reviewDecision'] as String?;
+
     return SearchResultPullRequest(
       authorLogin: json['author']['login'],
-      number: json['number'],
       isDraft: json['isDraft'],
+      number: json['number'],
       repositoryNameWithOwner: json['repository']['nameWithOwner'],
-      reviewDecision: ReviewDecision.fromString(json['reviewDecision']),
+      reviewDecision: reviewDecision != null ? ReviewDecision.fromString(reviewDecision) : null,
       state: ItemState.fromString(json['state']),
       title: json['title'],
       totalCommentsCount: json['totalCommentsCount'],
       updatedAt: DateTime.parse(json['updatedAt']),
+      url: Uri.parse(json['url']),
     );
   }
 }
@@ -144,13 +149,13 @@ enum IssueStateReason {
 
 enum ReviewDecision {
   approved,
-  changedRequested,
+  changesRequested,
   reviewRequired;
 
   static ReviewDecision fromString(String value) {
     return switch (value) {
       'APPROVED' => approved,
-      'CHANGES_REQUESTED' => changedRequested,
+      'CHANGES_REQUESTED' => changesRequested,
       'REVIEW_REQUIRED' => reviewRequired,
       _ => throw 'Invalid review decision $value',
     };

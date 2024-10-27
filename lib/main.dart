@@ -1,11 +1,17 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gh_status/github.dart' as github;
+import 'package:gh_status/logic.dart';
 import 'package:gh_status/primer.dart' as primer;
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-void main() {
+const client = github.GitHub(token: 'TODO');
+
+YoursModel yours = createYoursModel(client);
+
+void main() async {
   runApp(const MyApp());
 }
 
@@ -53,55 +59,35 @@ class Shell extends StatelessWidget {
           tabs: [
             ShadTab(
               value: 'yours',
-              child: const Text('Yours (10)'),
+              child: Text('Yours (15)'),
               content: ShadCard(
                 title: const Text('Yours'),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ShadAccordion.multiple(
-                      initialValue: ['created', 'mentioned', 'review-requests', 'assigned'],
+                      initialValue: ['created', 'review-requests', 'mentioned', 'assigned'],
                       children: [
-                        ShadAccordionItem(
-                          value: 'created',
-                          title: Wrap(
-                            children: [
-                              Text('Created'),
-                              SizedBox(width: 4.0),
-                              Text(
-                                '(15)',
-                                style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              IssueTile(
-                                type: github.ItemType.pullRequest,
-                                state: github.ItemState.open,
-                                isDraft: false,
-                                title: 'This is my PR',
-                              ),
-                              SizedBox(height: 4.0),
-                              IssueTile(
-                                type: github.ItemType.pullRequest,
-                                state: github.ItemState.open,
-                                isDraft: false,
-                                title: 'This is my PR',
-                              ),
-                              SizedBox(height: 4.0),
-                              IssueTile(
-                                type: github.ItemType.pullRequest,
-                                state: github.ItemState.open,
-                                isDraft: false,
-                                title: 'This is my PR',
-                              ),
-                            ],
-                          ),
+                        IssueListAccordion(
+                          accordionKey: 'created',
+                          accordionTitle: 'Created',
+                          model: yours.created,
                         ),
-                        ShadAccordionItem(value: 'mentioned', title: Text('Mentioned'), child: Text('...')),
-                        ShadAccordionItem(value: 'review-requests', title: Text('Review requests'), child: Text('...')),
-                        ShadAccordionItem(value: 'assigned', title: Text('Assigned'), child: Text('...')),
+                        IssueListAccordion(
+                          accordionKey: 'review-requests',
+                          accordionTitle: 'Review requests',
+                          model: yours.reviewRequests,
+                        ),
+                        IssueListAccordion(
+                          accordionKey: 'mentioned',
+                          accordionTitle: 'Mentioned',
+                          model: yours.mentioned,
+                        ),
+                        IssueListAccordion(
+                          accordionKey: 'assigned',
+                          accordionTitle: 'Assigned',
+                          model: yours.assigned,
+                        ),
                       ],
                     ),
                   ],
@@ -190,23 +176,99 @@ class Shell extends StatelessWidget {
   }
 }
 
-class IssueTile extends StatelessWidget {
-  const IssueTile({
+class IssueListAccordion extends StatelessWidget {
+  const IssueListAccordion({
     super.key,
-    required this.type,
-    required this.state,
-    required this.isDraft,
-    required this.title,
+    required this.accordionKey,
+    required this.accordionTitle,
+    required this.model,
   });
 
-  final github.ItemType type;
-  final github.ItemState state;
-  final bool isDraft;
-  final String title;
+  final String accordionKey;
+  final String accordionTitle;
+  final ValueListenable<AsyncValue<IssueSearchModel>> model;
 
   @override
   Widget build(BuildContext context) {
-    final uri = Uri.parse('https://google.com');
+    return ListenableBuilder(
+      listenable: model,
+      builder: (context, child) {
+        return ShadAccordionItem(
+          value: accordionKey,
+          title: Wrap(
+            children: [
+              Text(accordionTitle),
+              const SizedBox(width: 4.0),
+              Text(
+                switch (model.value) {
+                  LoadingValue _ || ErrorValue _ => '(...)',
+                  DataValue(: var value) => '(${value.items.length.toString()})',
+                },
+                style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
+              ),
+            ],
+          ),
+          child: IssueList(model: model.value),
+        );
+      },
+    );
+  }
+}
+
+class IssueList extends StatelessWidget {
+  const IssueList({
+    super.key,
+    required this.model,
+  });
+
+  final AsyncValue<IssueSearchModel> model;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ... switch (model) {
+          LoadingValue _ => const [ CircularProgressIndicator() ],
+          ErrorValue(: var error) => [ Text('Error: $error') ],
+          DataValue(: var value) => [
+            for (final item in value.items) ...[
+              IssueTile(
+                isDraft: item.isDraft,
+                reviewDecision: item.reviewDecision,
+                state: item.state,
+                title: item.title,
+                type: item.type,
+                uri: item.uri,
+              ),
+              const SizedBox(height: 4.0),
+            ],
+          ],
+        },
+      ],
+    );
+  }
+}
+
+class IssueTile extends StatelessWidget {
+  const IssueTile({
+    super.key,
+    required this.isDraft,
+    required this.reviewDecision,
+    required this.state,
+    required this.title,
+    required this.type,
+    required this.uri,
+  });
+
+  final bool isDraft;
+  final github.ReviewDecision? reviewDecision;
+  final github.ItemState state;
+  final String title;
+  final github.ItemType type;
+  final Uri uri;
+
+  @override
+  Widget build(BuildContext context) {
     final spacer = const SizedBox(width: 6.0);
 
     return Row(
@@ -239,17 +301,26 @@ class IssueTile extends StatelessWidget {
             ),
           ),
         ),
-    
-        spacer,
-    
-        Link(
-          uri: uri,
-          child: primer.IssueLabel(
-            name: 'Approved',
-            color: primer.Colors.openForeground,
+
+        if (reviewDecision != null && reviewDecision != github.ReviewDecision.reviewRequired) ...[
+          spacer,
+
+          Link(
+            uri: uri,
+            child: switch (reviewDecision) {
+              github.ReviewDecision.approved => primer.IssueLabel(
+                name: 'Approved',
+                color: primer.Colors.openForeground,
+              ),
+              github.ReviewDecision.changesRequested => primer.IssueLabel(
+                name: 'Changes requested',
+                color: primer.Colors.closedForeground,
+              ),
+              _ => throw 'Unknown review decision $reviewDecision',
+            },
           ),
-        ),
-    
+        ],
+
         spacer,
     
         Link(

@@ -1,5 +1,9 @@
 sealed class AsyncValue<T> {
   const AsyncValue();
+
+  factory AsyncValue.loading() = LoadingValue;
+  factory AsyncValue.data(T value) = DataValue;
+  factory AsyncValue.error({required Object error, required StackTrace stackTrace}) = ErrorValue;
 }
 
 class LoadingValue<T> extends AsyncValue<T> {
@@ -7,7 +11,7 @@ class LoadingValue<T> extends AsyncValue<T> {
 }
 
 class DataValue<T> extends AsyncValue<T> {
-  const DataValue({required this.value});
+  const DataValue(this.value);
 
   final T value;
 }

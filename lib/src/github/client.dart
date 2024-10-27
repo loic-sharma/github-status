@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import 'models.dart';
 
 class GitHub {
-  const GitHub({required token}) : _token = token;
+  const GitHub({required String? token}) : _token = token;
 
-  final String _token;
+  final String? _token;
 
   // https://docs.github.com/en/graphql/reference/queries#search
   Future<Result<IssueSearch>> searchIssues(
@@ -75,7 +75,8 @@ class GitHub {
       final uri = Uri.https('api.github.com', path, queryParameters);
       final headers = {
           'Accept': 'application/vnd.github.v3+json',
-          'Authorization': 'token $_token',
+          if (_token != null)
+            'Authorization': 'token $_token',
         };
 
       late http.Response response;
@@ -143,7 +144,7 @@ class UnauthorizedResult<T> extends Result<T> {
 }
 
 class OkResult<T> extends Result<T> {
-  const OkResult(T this.data);
+  const OkResult(this.data);
 
   final T data;
 }
@@ -169,6 +170,7 @@ fragment IssueOrPullRequestFields on IssueOrPullRequest {
     title
     totalCommentsCount
     updatedAt
+    url
     author {
       login
     }
@@ -181,6 +183,7 @@ fragment IssueOrPullRequestFields on IssueOrPullRequest {
     state
     title
     updatedAt
+    url
     author {
       login
     }
