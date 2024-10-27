@@ -11,22 +11,22 @@ YoursModel createYoursModel(github.GitHub client) {
 
   unawaited(_searchIssues(
     client,
-    'is:open is:pr author:loic-sharma archived:false',
+    'is:open is:pr author:@me archived:false',
     result.created,
   ));
   unawaited(_searchIssues(
     client,
-    'sort:updated-desc is:open is:pr archived:false review-requested:loic-sharma',
+    'sort:updated-desc is:open is:pr archived:false review-requested:@me',
     result.reviewRequests,
   ));
   unawaited(_searchIssues(
     client,
-    'sort:updated-desc is:open is:pr archived:false mentions:loic-sharma',
+    'sort:updated-desc is:open is:pr archived:false mentions:@me',
     result.mentioned,
   ));
   unawaited(_searchIssues(
     client,
-    'sort:updated-desc is:open is:pr archived:false assignee:loic-sharma',
+    'sort:updated-desc is:open is:pr archived:false assignee:@me',
     result.assigned,
   ));
 
