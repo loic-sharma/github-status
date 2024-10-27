@@ -110,9 +110,59 @@ class Shell extends StatelessWidget {
             ),
             ShadTab(
               value: 'team',
-              child: const Text('Team (5)'),
+              child: const Text('Following (5)'),
               content: ShadCard(
-                title: const Text('Team'),
+                title: const Text('Following'),
+                description: const Text(
+                    "Change your password here. After saving, you'll be logged out."),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    ShadInputFormField(
+                      label: const Text('Current password'),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 8),
+                    ShadInputFormField(
+                      label: const Text('New password'),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+                footer: const ShadButton(child: Text('Save password')),
+              ),
+            ),
+            ShadTab(
+              value: 'ios-triage',
+              child: const Text('iOS triage (3)'),
+              content: ShadCard(
+                title: const Text('iOS triage'),
+                description: const Text(
+                    "Change your password here. After saving, you'll be logged out."),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    ShadInputFormField(
+                      label: const Text('Current password'),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 8),
+                    ShadInputFormField(
+                      label: const Text('New password'),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+                footer: const ShadButton(child: Text('Save password')),
+              ),
+            ),
+            ShadTab(
+              value: 'desktop-triage',
+              child: const Text('Desktop triage (3)'),
+              content: ShadCard(
+                title: const Text('Desktop triage'),
                 description: const Text(
                     "Change your password here. After saving, you'll be logged out."),
                 child: Column(
