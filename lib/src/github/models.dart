@@ -13,13 +13,19 @@ class ItemIdentifier {
 
 class IssueSearch {
   IssueSearch({
+    required this.issueCount,
     required this.items,
   });
 
+  final int issueCount;
   final List<SearchResultIssueOrPullRequest> items;
 
   factory IssueSearch.fromJson(Map<String, dynamic> json) {
-    final edges = json['data']?['search']?['edges'] as List<dynamic>? ?? const [];
+    assert(json.containsKey('data'));
+    assert(json['data'].containsKey('search'));
+    assert(json['data']['search'].containsKey('edges'));
+
+    final edges = json['data']['search']['edges'] as List<dynamic>;
 
     final items = <SearchResultIssueOrPullRequest>[];
     for (final edge in edges) {
@@ -31,6 +37,7 @@ class IssueSearch {
     }
 
     return IssueSearch(
+      issueCount: json['data']['search']['issueCount'],
       items: items,
     );
   }

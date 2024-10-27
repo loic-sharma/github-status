@@ -152,6 +152,7 @@ class OkResult<T> extends Result<T> {
 const searchPullRequestsQuery = r'''
 query Search($first: Int, $query: String!) {
   search(type: ISSUE, first: $first, query: $query) {
+    issueCount
     edges {
       node {
         ...IssueOrPullRequestFields

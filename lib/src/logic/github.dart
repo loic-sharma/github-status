@@ -61,7 +61,7 @@ Future<void> _searchIssues(
     }
 
     result.value = AsyncValue.data(IssueSearchModel(
-      results: items.length,
+      results: data.issueCount,
       items: items,
     ));
     return;
