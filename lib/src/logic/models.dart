@@ -21,10 +21,10 @@ abstract class AppTabModel implements Listenable {
 }
 
 abstract class YoursModel {
-  ValueListenable<AsyncValue<IssueSearchModel>> get created;
-  ValueListenable<AsyncValue<IssueSearchModel>> get mentioned;
-  ValueListenable<AsyncValue<IssueSearchModel>> get reviewRequests;
-  ValueListenable<AsyncValue<IssueSearchModel>> get assigned;
+  AsyncValueListenable<IssueSearchModel> get created;
+  AsyncValueListenable<IssueSearchModel> get mentioned;
+  AsyncValueListenable<IssueSearchModel> get reviewRequests;
+  AsyncValueListenable<IssueSearchModel> get assigned;
 }
 
 class IssueSearchModel {
@@ -60,3 +60,5 @@ class IssueSearchItemModel {
   final DateTime updatedAt;
   final Uri uri;
 }
+
+typedef AsyncValueListenable<T> = ValueListenable<AsyncValue<T>>;

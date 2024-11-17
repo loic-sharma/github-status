@@ -1,4 +1,5 @@
 
+import 'package:context_watch/context_watch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gh_status/github.dart' as github;
@@ -25,26 +26,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadApp(
-      theme: ShadThemeData(
-        brightness: Brightness.light,
-        colorScheme: const ShadZincColorScheme.light(),
-        // Example with google fonts
-        // textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.poppins),
+    return ContextWatch.root(
+      child: ShadApp(
+        theme: ShadThemeData(
+          brightness: Brightness.light,
+          colorScheme: const ShadZincColorScheme.light(),
+          // Example with google fonts
+          // textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.poppins),
 
-        // Example of custom font family
-        // textTheme: ShadTextTheme(family: 'UbuntuMono'),
+          // Example of custom font family
+          // textTheme: ShadTextTheme(family: 'UbuntuMono'),
 
-        // Example to disable the secondary border
-        // disableSecondaryBorder: true,
+          // Example to disable the secondary border
+          // disableSecondaryBorder: true,
+        ),
+        darkTheme: ShadThemeData(
+          brightness: Brightness.dark,
+          colorScheme: const ShadZincColorScheme.dark(),
+          // Example of custom font family
+          // textTheme: ShadTextTheme(family: 'UbuntuMono'),
+        ),
+        home: Shell(),
       ),
-      darkTheme: ShadThemeData(
-        brightness: Brightness.dark,
-        colorScheme: const ShadZincColorScheme.dark(),
-        // Example of custom font family
-        // textTheme: ShadTextTheme(family: 'UbuntuMono'),
-      ),
-      home: Shell(),
     );
   }
 }
@@ -191,32 +194,29 @@ class IssueListAccordion extends StatelessWidget {
 
   final String accordionKey;
   final String accordionTitle;
-  final ValueListenable<AsyncValue<IssueSearchModel>> model;
+  final AsyncValueListenable<IssueSearchModel> model;
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: model,
-      builder: (context, child) {
-        return ShadAccordionItem(
-          value: accordionKey,
-          title: Wrap(
-            children: [
-              Text(accordionTitle),
-              const SizedBox(width: 4.0),
-              Text(
-                switch (model.value) {
-                  LoadingValue _ => '(...)',
-                  ErrorValue _ => '',
-                  DataValue(: var value) => '(${value.items.length.toString()})',
-                },
-                style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
-              ),
-            ],
+    model.watch(context);
+
+    return ShadAccordionItem(
+      value: accordionKey,
+      title: Wrap(
+        children: [
+          Text(accordionTitle),
+          const SizedBox(width: 4.0),
+          Text(
+            switch (model.value) {
+              LoadingValue _ => '(...)',
+              ErrorValue _ => '',
+              DataValue(: var value) => '(${value.items.length.toString()})',
+            },
+            style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
           ),
-          child: IssueList(model: model.value),
-        );
-      },
+        ],
+      ),
+      child: IssueList(model: model.value),
     );
   }
 }
@@ -281,7 +281,7 @@ class IssueTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final spacer = const SizedBox(width: 6.0);
+    const spacer = SizedBox(width: 6.0);
 
     return Row(
       children: [
