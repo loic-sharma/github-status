@@ -206,7 +206,8 @@ class IssueListAccordion extends StatelessWidget {
               const SizedBox(width: 4.0),
               Text(
                 switch (model.value) {
-                  LoadingValue _ || ErrorValue _ => '(...)',
+                  LoadingValue _ => '(...)',
+                  ErrorValue _ => '',
                   DataValue(: var value) => '(${value.items.length.toString()})',
                 },
                 style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),

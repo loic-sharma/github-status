@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 import 'models.dart';
 
 class GitHub {
-  const GitHub({required String? token}) : _token = token;
+  const GitHub({required String? token})
+    : assert(token != 'TODO'),
+      _token = token;
 
   final String? _token;
 
@@ -50,11 +52,11 @@ class GitHub {
     var response = await _doRequest(method, path, queryParameters, body);
 
     if (response.statusCode == 401) {
-      return const Result.unauthorized();
+      return Result.unauthorized(response);
     }
 
     if (response.statusCode >= 500 && response.statusCode <= 599) {
-      return const Result.serverError();
+      return Result.serverError(response);
     }
 
     final json = jsonDecode(utf8.decode(response.bodyBytes));
@@ -123,8 +125,8 @@ enum ResultKind {
 sealed class Result<T> {
   const Result();
 
-  const factory Result.serverError() = ServerErrorResult;
-  const factory Result.unauthorized() = UnauthorizedResult;
+  const factory Result.serverError(http.Response response) = ServerErrorResult;
+  const factory Result.unauthorized(http.Response response) = UnauthorizedResult;
   const factory Result.ok(T data) = OkResult;
 
   T get requireData {
@@ -136,11 +138,15 @@ sealed class Result<T> {
 }
 
 class ServerErrorResult<T> extends Result<T> {
-  const ServerErrorResult();
+  const ServerErrorResult(this.response);
+
+  final http.Response response;
 }
 
 class UnauthorizedResult<T> extends Result<T> {
-  const UnauthorizedResult();
+  const UnauthorizedResult(this.response);
+
+  final http.Response response;
 }
 
 class OkResult<T> extends Result<T> {

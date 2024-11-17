@@ -36,12 +36,40 @@ YoursModel createYoursModel(github.GitHub client) {
 Future<void> _searchIssues(
   github.GitHub client,
   String query,
-  ValueNotifier<AsyncValue<IssueSearchModel>> result,
+  ValueNotifier<AsyncValue<IssueSearchModel>> model,
 ) async {
-  final response = await client.searchIssues(query);
+  final result = await client.searchIssues(query);
 
-  // TODO: Error handling
-  if (response case github.OkResult<github.IssueSearch>(:final data)) {
+  if (result case github.ServerErrorResult<github.IssueSearch>()) {
+    model.value = AsyncValue.error(
+      error:
+        'Server error\n'
+        '${kDebugMode
+          ? 'Status code: ${result.response.statusCode}\n'
+            'Reason phrase: ${result.response.reasonPhrase}\n'
+            'Body: ${result.response.body}\n'
+          : ''
+        }',
+      stackTrace: StackTrace.current,
+    );
+  }
+
+  if (result case github.UnauthorizedResult<github.IssueSearch>()) {
+    model.value = AsyncValue.error(
+      error:
+        'Unauthorized\n'
+        '${kDebugMode
+          ? 'Status code: ${result.response.statusCode}\n'
+            'Reason phrase: ${result.response.reasonPhrase}\n'
+            'Body: ${result.response.body}\n'
+          : ''
+        }',
+      stackTrace: StackTrace.current,
+    );
+    return;
+  }
+
+  if (result case github.OkResult<github.IssueSearch>(:final data)) {
     final items = <IssueSearchItemModel>[];
     for (final item in data.items) {
       items.add(switch (item) {
@@ -60,7 +88,7 @@ Future<void> _searchIssues(
       });
     }
 
-    result.value = AsyncValue.data(IssueSearchModel(
+    model.value = AsyncValue.data(IssueSearchModel(
       results: data.issueCount,
       items: items,
     ));
