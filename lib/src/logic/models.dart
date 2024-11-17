@@ -21,10 +21,16 @@ abstract class AppTabModel implements Listenable {
 }
 
 abstract class YoursModel {
+  AsyncValueListenable<int> get total;
   AsyncValueListenable<IssueSearchModel> get created;
   AsyncValueListenable<IssueSearchModel> get mentioned;
   AsyncValueListenable<IssueSearchModel> get reviewRequests;
   AsyncValueListenable<IssueSearchModel> get assigned;
+}
+
+abstract class SimpleIssueSearchTabModel {
+  AsyncValueListenable<int> get total;
+  AsyncValueListenable<IssueSearchModel> get items;
 }
 
 class IssueSearchModel {

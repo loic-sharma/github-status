@@ -14,6 +14,7 @@ import 'src/logic/timeago.dart';
 const client = github.GitHub(token: 'TODO');
 
 YoursModel yours = createYoursModel(client);
+SimpleIssueSearchTabModel following = createFollowingModel(client);
 
 void main() async {
   registerTimeago();
@@ -67,7 +68,15 @@ class Shell extends StatelessWidget {
           tabs: [
             ShadTab(
               value: 'yours',
-              child: Text('Yours (15)'),
+              child: ListenableBuilder(
+                listenable: yours.total,
+                builder: (context, child) =>
+                  switch(yours.total.value) {
+                    LoadingValue _ => Text('Yours (...)'),
+                    ErrorValue _ => Text('Yours'),
+                    DataValue(: var value) => Text('Yours ($value)'),
+                  },
+              ),
               content: ShadCard(
                 title: const Text('Yours'),
                 child: Column(
@@ -104,27 +113,23 @@ class Shell extends StatelessWidget {
             ),
             ShadTab(
               value: 'team',
-              child: const Text('Following (5)'),
+              child: ListenableBuilder(
+                listenable: following.total,
+                builder: (context, child) =>
+                  switch(following.total.value) {
+                    LoadingValue _ => Text('Following (...)'),
+                    ErrorValue _ => Text('Following'),
+                    DataValue(: var value) => Text('Following ($value)'),
+                  },
+              ),
               content: ShadCard(
                 title: const Text('Following'),
-                description: const Text(
-                    "Change your password here. After saving, you'll be logged out."),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    ShadInputFormField(
-                      label: const Text('Current password'),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 8),
-                    ShadInputFormField(
-                      label: const Text('New password'),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
+                child: ListenableBuilder(
+                  listenable: following.items,
+                  builder: (context, child) => IssueList(
+                    model: following.items.value,
+                  ),
                 ),
-                footer: const ShadButton(child: Text('Save password')),
               ),
             ),
             ShadTab(

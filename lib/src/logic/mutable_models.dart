@@ -43,14 +43,27 @@ class MutableAppTabModel with ChangeNotifier implements AppTabModel {
 
 class MutableYoursModel implements YoursModel {
   @override
-  ValueNotifier<AsyncValue<IssueSearchModel>> created = ValueNotifier(const LoadingValue<IssueSearchModel>());
+  AsyncValueNotifier<int> total = ValueNotifier(const LoadingValue<int>());
 
   @override
-  ValueNotifier<AsyncValue<IssueSearchModel>> mentioned = ValueNotifier(const LoadingValue<IssueSearchModel>());
+  AsyncValueNotifier<IssueSearchModel> created = ValueNotifier(const LoadingValue<IssueSearchModel>());
 
   @override
-  ValueNotifier<AsyncValue<IssueSearchModel>> reviewRequests = ValueNotifier(const LoadingValue<IssueSearchModel>());
+  AsyncValueNotifier<IssueSearchModel> mentioned = ValueNotifier(const LoadingValue<IssueSearchModel>());
 
   @override
-  ValueNotifier<AsyncValue<IssueSearchModel>> assigned = ValueNotifier(const LoadingValue<IssueSearchModel>());
+  AsyncValueNotifier<IssueSearchModel> reviewRequests = ValueNotifier(const LoadingValue<IssueSearchModel>());
+
+  @override
+  AsyncValueNotifier<IssueSearchModel> assigned = ValueNotifier(const LoadingValue<IssueSearchModel>());
 }
+
+class MutableSimpleIssueSearchTabModel implements SimpleIssueSearchTabModel {
+  @override
+  AsyncValueNotifier<int> total = ValueNotifier(const LoadingValue<int>());
+
+  @override
+  AsyncValueNotifier<IssueSearchModel> items = ValueNotifier(const LoadingValue<IssueSearchModel>());
+}
+
+typedef AsyncValueNotifier<T> = ValueNotifier<AsyncValue<T>>;

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gh_status/github.dart' as github;
 import 'package:gh_status/logic.dart';
@@ -9,39 +10,101 @@ import 'mutable_models.dart';
 YoursModel createYoursModel(github.GitHub client) {
   final result = MutableYoursModel();
 
-  unawaited(_searchIssues(
+  unawaited(_updateIssueSearchModel(
+    result.created,
     client,
     'is:open is:pr author:@me archived:false',
-    result.created,
   ));
-  unawaited(_searchIssues(
+  unawaited(_updateIssueSearchModel(
+    result.reviewRequests,
     client,
     'sort:updated-desc is:open is:pr archived:false review-requested:@me',
-    result.reviewRequests,
   ));
-  unawaited(_searchIssues(
+  unawaited(_updateIssueSearchModel(
+    result.mentioned,
     client,
     'sort:updated-desc is:open is:pr archived:false mentions:@me',
-    result.mentioned,
   ));
-  unawaited(_searchIssues(
+  unawaited(_updateIssueSearchModel(
+    result.assigned,
     client,
     'sort:updated-desc is:open is:pr archived:false assignee:@me',
-    result.assigned,
   ));
 
   return result;
 }
 
-Future<void> _searchIssues(
+SimpleIssueSearchTabModel createFollowingModel(github.GitHub client) {
+  final following = [
+    'cbracken',
+    'hellohuanlin',
+    'jmagman',
+    'louisehsu',
+  ];
+
+  final model = MutableSimpleIssueSearchTabModel();
+
+  unawaited(_searchMultipleIssuesAndUpdateModel(
+    model.items,
+    client,
+    queries: [
+      for (final user in following)
+        'is:open is:pr archived:false author:$user sort:updated-desc',
+    ],
+  ));
+
+  return model;
+}
+
+Future<void> _updateIssueSearchModel(
+  ValueNotifier<AsyncValue<IssueSearchModel>> model,
   github.GitHub client,
   String query,
-  ValueNotifier<AsyncValue<IssueSearchModel>> model,
 ) async {
   final result = await client.searchIssues(query);
 
-  if (result case github.ServerErrorResult<github.IssueSearch>()) {
+  model.value = _createIssueSearchModel(result);
+}
+
+Future<void> _searchMultipleIssuesAndUpdateModel(
+  ValueNotifier<AsyncValue<IssueSearchModel>> model,
+  github.GitHub client, {
+  required List<String> queries,
+}) async {
+  final results = await Future.wait([
+    for (final query in queries)
+      client.searchIssues(query),
+  ]);
+
+  final models = results.map(_createIssueSearchModel).toList();
+
+  assert(models.whereType<LoadingValue>().isEmpty);
+
+  final errors = models.whereType<ErrorValue>().toList();
+  if (errors.isNotEmpty) {
     model.value = AsyncValue.error(
+      error: errors.map((e) => e.error).join('\n\n'),
+      stackTrace: errors.first.stackTrace,
+    );
+    return;
+  }
+
+  // TODO: Sort items by updated date
+  final data = models.cast<DataValue<IssueSearchModel>>();
+  var items = data.map((d) => d.value.items).expand((i) => i).toList();
+  var resultsCount = data.map((d) => d.value.results).fold(0, (a, b) => a + b);
+
+  model.value = AsyncValue.data(IssueSearchModel(
+    results: resultsCount,
+    items: items,
+  ));
+}
+
+AsyncValue<IssueSearchModel> _createIssueSearchModel(
+  github.Result<github.IssueSearch> result,
+) {
+  if (result case github.ServerErrorResult<github.IssueSearch>()) {
+    return AsyncValue.error(
       error:
         'Server error\n'
         '${kDebugMode
@@ -55,7 +118,7 @@ Future<void> _searchIssues(
   }
 
   if (result case github.UnauthorizedResult<github.IssueSearch>()) {
-    model.value = AsyncValue.error(
+    return AsyncValue.error(
       error:
         'Unauthorized\n'
         '${kDebugMode
@@ -66,7 +129,6 @@ Future<void> _searchIssues(
         }',
       stackTrace: StackTrace.current,
     );
-    return;
   }
 
   if (result case github.OkResult<github.IssueSearch>(:final data)) {
@@ -88,10 +150,11 @@ Future<void> _searchIssues(
       });
     }
 
-    model.value = AsyncValue.data(IssueSearchModel(
+    return AsyncValue.data(IssueSearchModel(
       results: data.issueCount,
       items: items,
     ));
-    return;
   }
+
+  throw 'Unsupported GitHub issue search type ${result.runtimeType}';
 }
