@@ -5,19 +5,6 @@ import 'package:gh_status/github.dart' as github;
 import 'async.dart';
 
 abstract class AppModel {
-  AppTabsModel get tabs;
-}
-
-abstract class AppTabsModel implements Listenable {
-  List<AppTabModel> get tabs;
-}
-
-abstract class AppTabModel implements Listenable {
-  String get key;
-  String get label;
-  int? get value;
-
-  void open();
 }
 
 abstract class YoursModel {
