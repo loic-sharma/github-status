@@ -1,15 +1,16 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gh_status/logic.dart';
+import 'package:gh_status/foundation.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'issue_list.dart';
+import '../models.dart' as models;
 
 class Inbox extends StatelessWidget {
   const Inbox({super.key, required this.yours, required this.following});
 
-  final YoursModel yours;
-  final SimpleIssueSearchTabModel following;
+  final models.YoursModel yours;
+  final models.IssueSearchTabModel following;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class YoursTabContent extends StatelessWidget {
     required this.yours,
   });
 
-  final YoursModel yours;
+  final models.YoursModel yours;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +122,7 @@ class FollowingTabContent extends StatelessWidget {
     required this.following,
   });
 
-  final SimpleIssueSearchTabModel following;
+  final models.IssueSearchTabModel following;
 
   @override
   Widget build(BuildContext context) {

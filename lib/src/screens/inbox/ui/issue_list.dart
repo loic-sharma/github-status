@@ -1,13 +1,14 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter/widgets.dart';
+import 'package:gh_status/foundation.dart';
 import 'package:gh_status/github.dart' as github;
-import 'package:gh_status/logic.dart';
 import 'package:gh_status/primer.dart' as primer;
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-import '../../link.dart';
+import '../../../ui/link.dart';
+import '../models.dart' as models;
 
 class IssueListAccordion extends StatelessWidget {
   const IssueListAccordion({
@@ -19,7 +20,7 @@ class IssueListAccordion extends StatelessWidget {
 
   final String accordionKey;
   final String accordionTitle;
-  final AsyncValueListenable<IssueSearchModel> model;
+  final AsyncValueListenable<models.IssueSearch> model;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class IssueList extends StatelessWidget {
     required this.model,
   });
 
-  final AsyncValue<IssueSearchModel> model;
+  final AsyncValue<models.IssueSearch> model;
 
   @override
   Widget build(BuildContext context) {

@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:gh_status/foundation.dart';
 import 'package:gh_status/github.dart' as github;
-import 'package:gh_status/logic.dart';
 
-import 'mutable_models.dart';
+import 'models.dart' as models;
 
-YoursModel createYoursModel(github.GitHub client) {
-  final model = MutableYoursModel();
+models.YoursModel createYoursModel(github.GitHub client) {
+  final model = models.YoursModel();
   _loadYoursModel(client, model);
   return model;
 }
 
 Future<void> _loadYoursModel(
   github.GitHub client,
-  MutableYoursModel model,
+  models.YoursModel model,
 ) async {
   await Future.wait([
     _updateIssueSearchModel(
@@ -41,24 +41,24 @@ Future<void> _loadYoursModel(
   ]);
 
   int totalResults = 0;
-  if (model.created.value case DataValue<IssueSearchModel>(value: final created)) {
+  if (model.created.value case DataValue<models.IssueSearch>(value: final created)) {
     totalResults += created.results;
   }
-  if (model.reviewRequests.value case DataValue<IssueSearchModel>(value: final reviewRequests)) {
+  if (model.reviewRequests.value case DataValue<models.IssueSearch>(value: final reviewRequests)) {
     totalResults += reviewRequests.results;
   }
-  if (model.mentioned.value case DataValue<IssueSearchModel>(value: final mentioned)) {
+  if (model.mentioned.value case DataValue<models.IssueSearch>(value: final mentioned)) {
     totalResults += mentioned.results;
   }
-  if (model.assigned.value case DataValue<IssueSearchModel>(value: final assigned)) {
+  if (model.assigned.value case DataValue<models.IssueSearch>(value: final assigned)) {
     totalResults += assigned.results;
   }
 
   model.total.value = AsyncValue.data(totalResults);
 }
 
-SimpleIssueSearchTabModel createFollowingModel(github.GitHub client) {
-  final model = MutableSimpleIssueSearchTabModel();
+models.IssueSearchTabModel createFollowingModel(github.GitHub client) {
+  final model = models.IssueSearchTabModel();
 
   unawaited(_loadFollowingModel(client, model));
 
@@ -67,7 +67,7 @@ SimpleIssueSearchTabModel createFollowingModel(github.GitHub client) {
 
 Future<void> _loadFollowingModel(
   github.GitHub client,
-  MutableSimpleIssueSearchTabModel model
+  models.IssueSearchTabModel model
 ) async {
   final following = [
     'cbracken',
@@ -87,7 +87,7 @@ Future<void> _loadFollowingModel(
 }
 
 Future<void> _updateIssueSearchModel(
-  ValueNotifier<AsyncValue<IssueSearchModel>> model,
+  ValueNotifier<AsyncValue<models.IssueSearch>> model,
   github.GitHub client,
   String query,
 ) async {
@@ -97,7 +97,7 @@ Future<void> _updateIssueSearchModel(
 }
 
 Future<void> _searchMultipleIssuesAndUpdateModel(
-  MutableSimpleIssueSearchTabModel model,
+  models.IssueSearchTabModel model,
   github.GitHub client, {
   required List<String> queries,
 }) async {
@@ -106,11 +106,11 @@ Future<void> _searchMultipleIssuesAndUpdateModel(
       client.searchIssues(query),
   ]);
 
-  final models = results.map(_createIssueSearchModel).toList();
+  final raw = results.map(_createIssueSearchModel).toList();
 
-  assert(models.whereType<LoadingValue>().isEmpty);
+  assert(raw.whereType<LoadingValue>().isEmpty);
 
-  final errors = models.whereType<ErrorValue>().toList();
+  final errors = raw.whereType<ErrorValue>().toList();
   if (errors.isNotEmpty) {
     model.items = AsyncValue.error(
       error: errors.map((e) => e.error).join('\n\n'),
@@ -119,7 +119,7 @@ Future<void> _searchMultipleIssuesAndUpdateModel(
     return;
   }
 
-  final data = models.cast<DataValue<IssueSearchModel>>();
+  final data = raw.cast<DataValue<models.IssueSearch>>();
   var items = data
     .map((d) => d.value.items)
     .expand((i) => i).sortedBy((i) => i.updatedAt)
@@ -127,13 +127,13 @@ Future<void> _searchMultipleIssuesAndUpdateModel(
     .toList();
   var resultsCount = data.map((d) => d.value.results).sum;
 
-  model.items = AsyncValue.data(IssueSearchModel(
+  model.items = AsyncValue.data(models.IssueSearch(
     results: resultsCount,
     items: items,
   ));
 }
 
-AsyncValue<IssueSearchModel> _createIssueSearchModel(
+AsyncValue<models.IssueSearch> _createIssueSearchModel(
   github.Result<github.IssueSearch> result,
 ) {
   if (result case github.ServerErrorResult<github.IssueSearch>()) {
@@ -165,10 +165,10 @@ AsyncValue<IssueSearchModel> _createIssueSearchModel(
   }
 
   if (result case github.OkResult<github.IssueSearch>(:final data)) {
-    final items = <IssueSearchItemModel>[];
+    final items = <models.IssueSearchItem>[];
     for (final item in data.items) {
       items.add(switch (item) {
-        github.SearchResultPullRequest pull => IssueSearchItemModel(
+        github.SearchResultPullRequest pull => models.IssueSearchItem(
           authorAvatarUri: pull.authorAvatarUrl,
           isDraft: pull.isDraft,
           lastUpdated: pull.updatedAt,
@@ -183,7 +183,7 @@ AsyncValue<IssueSearchModel> _createIssueSearchModel(
       });
     }
 
-    return AsyncValue.data(IssueSearchModel(
+    return AsyncValue.data(models.IssueSearch(
       results: data.issueCount,
       items: items,
     ));

@@ -2,16 +2,15 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 import 'package:gh_status/github.dart' as github;
-import 'package:gh_status/logic.dart';
-import 'package:gh_status/ui.dart';
+import 'package:gh_status/src/screens/inbox.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'src/logic/timeago.dart';
+import 'src/foundation/timeago.dart';
 
 const client = github.GitHub(token: 'TODO');
 
 YoursModel yours = createYoursModel(client);
-SimpleIssueSearchTabModel following = createFollowingModel(client);
+IssueSearchTabModel following = createFollowingModel(client);
 
 void main() async {
   registerTimeago();

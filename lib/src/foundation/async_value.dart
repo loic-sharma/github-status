@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 sealed class AsyncValue<T> {
   const AsyncValue();
 
@@ -26,3 +28,5 @@ class ErrorValue<T> extends AsyncValue<T> {
   final StackTrace stackTrace;
 }
 
+typedef AsyncValueNotifier<T> = ValueNotifier<AsyncValue<T>>;
+typedef AsyncValueListenable<T> = ValueListenable<AsyncValue<T>>;
