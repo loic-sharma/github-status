@@ -59,9 +59,7 @@ Future<void> _loadYoursModel(
 
 models.FollowingTab createFollowingModel(github.GitHub client) {
   final model = models.FollowingTab();
-
   unawaited(_loadFollowingModel(client, model));
-
   return model;
 }
 
