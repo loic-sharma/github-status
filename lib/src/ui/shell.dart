@@ -1,5 +1,4 @@
 import 'package:context_watch/context_watch.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gh_status/logic.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -14,6 +13,9 @@ class Shell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    yours.total.watch(context);
+    following.watch(context);
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
@@ -25,18 +27,20 @@ class Shell extends StatelessWidget {
             ShadTab(
               value: 'yours',
               content: YoursTabContent(yours: yours),
-              child: Tab(
-                name: 'Yours',
-                items: yours.total,
-              ),
+              child: switch(yours.total.value) {
+                LoadingValue _ => const Text('Yours (...)'),
+                ErrorValue _ => const Text('Yours'),
+                DataValue(: var value) => Text('Yours ($value)'),
+              },
             ),
             ShadTab(
               value: 'team',
               content: FollowingTabContent(following: following),
-              child: Tab(
-                name: 'Following',
-                items: following.total,
-              ),
+              child: switch(following.items) {
+                LoadingValue _ => const Text('Following (...)'),
+                ErrorValue _ => const Text('Following'),
+                DataValue(: var value) => Text('Following (${value.results})'),
+              },
             ),
           ],
         ),
@@ -53,13 +57,11 @@ class Tab extends StatelessWidget {
   });
 
   final String name;
-  final ValueListenable<AsyncValue<int>> items;
+  final AsyncValue<int> items;
 
   @override
   Widget build(BuildContext context) {
-    items.watch(context);
-
-    return switch(items.value) {
+    return switch(items) {
       LoadingValue _ => Text('$name (...)'),
       ErrorValue _ => Text(name),
       DataValue(: var value) => Text('$name ($value)'),
@@ -123,12 +125,12 @@ class FollowingTabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    following.items.watch(context);
+    following.watch(context);
 
     return ShadCard(
       title: const Text('Following'),
       child: IssueList(
-        model: following.items.value,
+        model: following.items,
       ),
     );
   }

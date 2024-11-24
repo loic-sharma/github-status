@@ -28,12 +28,14 @@ class MutableYoursModel implements YoursModel {
   AsyncValueNotifier<IssueSearchModel> assigned = ValueNotifier(const LoadingValue<IssueSearchModel>());
 }
 
-class MutableSimpleIssueSearchTabModel implements SimpleIssueSearchTabModel {
+class MutableSimpleIssueSearchTabModel with ChangeNotifier implements SimpleIssueSearchTabModel {
   @override
-  AsyncValueNotifier<int> total = ValueNotifier(const LoadingValue<int>());
-
-  @override
-  AsyncValueNotifier<IssueSearchModel> items = ValueNotifier(const LoadingValue<IssueSearchModel>());
+  AsyncValue<IssueSearchModel> get items => _items;
+  AsyncValue<IssueSearchModel> _items = const LoadingValue<IssueSearchModel>();
+  set items(AsyncValue<IssueSearchModel> value) {
+    _items = value;
+    notifyListeners();
+  }
 }
 
 typedef AsyncValueNotifier<T> = ValueNotifier<AsyncValue<T>>;

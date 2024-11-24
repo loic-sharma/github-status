@@ -112,14 +112,13 @@ Future<void> _searchMultipleIssuesAndUpdateModel(
 
   final errors = models.whereType<ErrorValue>().toList();
   if (errors.isNotEmpty) {
-    model.items.value = AsyncValue.error(
+    model.items = AsyncValue.error(
       error: errors.map((e) => e.error).join('\n\n'),
       stackTrace: errors.first.stackTrace,
     );
     return;
   }
 
-  // TODO: Sort items by updated date
   final data = models.cast<DataValue<IssueSearchModel>>();
   var items = data
     .map((d) => d.value.items)
@@ -128,8 +127,7 @@ Future<void> _searchMultipleIssuesAndUpdateModel(
     .toList();
   var resultsCount = data.map((d) => d.value.results).sum;
 
-  model.total.value = AsyncValue.data(resultsCount);
-  model.items.value = AsyncValue.data(IssueSearchModel(
+  model.items = AsyncValue.data(IssueSearchModel(
     results: resultsCount,
     items: items,
   ));

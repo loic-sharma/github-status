@@ -15,9 +15,8 @@ abstract class YoursModel {
   AsyncValueListenable<IssueSearchModel> get assigned;
 }
 
-abstract class SimpleIssueSearchTabModel {
-  AsyncValueListenable<int> get total;
-  AsyncValueListenable<IssueSearchModel> get items;
+abstract class SimpleIssueSearchTabModel implements Listenable {
+  AsyncValue<IssueSearchModel> get items;
 }
 
 class IssueSearchModel {

@@ -3,7 +3,7 @@ import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 import 'package:gh_status/github.dart' as github;
 import 'package:gh_status/logic.dart';
-import 'package:gh_status/views.dart';
+import 'package:gh_status/ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'src/logic/timeago.dart';
