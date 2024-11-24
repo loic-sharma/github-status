@@ -7,15 +7,15 @@ import 'package:gh_status/github.dart' as github;
 
 import 'models.dart' as models;
 
-models.YoursModel createYoursModel(github.GitHub client) {
-  final model = models.YoursModel();
+models.YoursTab createYoursModel(github.GitHub client) {
+  final model = models.YoursTab();
   _loadYoursModel(client, model);
   return model;
 }
 
 Future<void> _loadYoursModel(
   github.GitHub client,
-  models.YoursModel model,
+  models.YoursTab model,
 ) async {
   await Future.wait([
     _updateIssueSearchModel(
@@ -57,8 +57,8 @@ Future<void> _loadYoursModel(
   model.total.value = AsyncValue.data(totalResults);
 }
 
-models.IssueSearchTabModel createFollowingModel(github.GitHub client) {
-  final model = models.IssueSearchTabModel();
+models.FollowingTab createFollowingModel(github.GitHub client) {
+  final model = models.FollowingTab();
 
   unawaited(_loadFollowingModel(client, model));
 
@@ -67,7 +67,7 @@ models.IssueSearchTabModel createFollowingModel(github.GitHub client) {
 
 Future<void> _loadFollowingModel(
   github.GitHub client,
-  models.IssueSearchTabModel model
+  models.FollowingTab model
 ) async {
   final following = [
     'cbracken',
@@ -97,7 +97,7 @@ Future<void> _updateIssueSearchModel(
 }
 
 Future<void> _searchMultipleIssuesAndUpdateModel(
-  models.IssueSearchTabModel model,
+  models.FollowingTab model,
   github.GitHub client, {
   required List<String> queries,
 }) async {

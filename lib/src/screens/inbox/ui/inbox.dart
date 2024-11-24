@@ -9,8 +9,8 @@ import '../models.dart' as models;
 class Inbox extends StatelessWidget {
   const Inbox({super.key, required this.yours, required this.following});
 
-  final models.YoursModel yours;
-  final models.IssueSearchTabModel following;
+  final models.YoursTab yours;
+  final models.FollowingTab following;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class YoursTabContent extends StatelessWidget {
     required this.yours,
   });
 
-  final models.YoursModel yours;
+  final models.YoursTab yours;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class FollowingTabContent extends StatelessWidget {
     required this.following,
   });
 
-  final models.IssueSearchTabModel following;
+  final models.FollowingTab following;
 
   @override
   Widget build(BuildContext context) {

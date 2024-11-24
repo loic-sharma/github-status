@@ -9,8 +9,8 @@ import 'src/foundation/timeago.dart';
 
 const client = github.GitHub(token: 'TODO');
 
-YoursModel yours = createYoursModel(client);
-IssueSearchTabModel following = createFollowingModel(client);
+YoursTab yours = createYoursModel(client);
+FollowingTab following = createFollowingModel(client);
 
 void main() async {
   registerTimeago();

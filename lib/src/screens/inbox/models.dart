@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:gh_status/foundation.dart';
 import 'package:gh_status/github.dart' as github;
 
-class YoursModel {
+class YoursTab {
   AsyncValueNotifier<int> total = ValueNotifier(const LoadingValue<int>());
 
   AsyncValueNotifier<IssueSearch> created = ValueNotifier(const LoadingValue<IssueSearch>());
@@ -14,7 +14,7 @@ class YoursModel {
   AsyncValueNotifier<IssueSearch> assigned = ValueNotifier(const LoadingValue<IssueSearch>());
 }
 
-class IssueSearchTabModel with ChangeNotifier {
+class FollowingTab with ChangeNotifier {
   AsyncValue<IssueSearch> get items => _items;
   AsyncValue<IssueSearch> _items = const LoadingValue<IssueSearch>();
   set items(AsyncValue<IssueSearch> value) {
