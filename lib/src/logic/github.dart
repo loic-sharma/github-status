@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gh_status/github.dart' as github;
 import 'package:gh_status/logic.dart';
@@ -120,8 +121,12 @@ Future<void> _searchMultipleIssuesAndUpdateModel(
 
   // TODO: Sort items by updated date
   final data = models.cast<DataValue<IssueSearchModel>>();
-  var items = data.map((d) => d.value.items).expand((i) => i).toList();
-  var resultsCount = data.map((d) => d.value.results).fold(0, (a, b) => a + b);
+  var items = data
+    .map((d) => d.value.items)
+    .expand((i) => i).sortedBy((i) => i.updatedAt)
+    .sortedByCompare((i) => i.updatedAt, (a, b) => b.compareTo(a))
+    .toList();
+  var resultsCount = data.map((d) => d.value.results).sum;
 
   model.total.value = AsyncValue.data(resultsCount);
   model.items.value = AsyncValue.data(IssueSearchModel(

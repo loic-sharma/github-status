@@ -1,6 +1,5 @@
 
 import 'package:context_watch/context_watch.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gh_status/github.dart' as github;
 import 'package:gh_status/logic.dart';

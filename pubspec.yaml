@@ -41,7 +41,7 @@ dependencies:
   http: ^1.2.2
   timeago: ^3.7.0
   context_watch: ^5.1.2
-  collection: ^1.19.0
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
