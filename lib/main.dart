@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           // Example of custom font family
           // textTheme: ShadTextTheme(family: 'UbuntuMono'),
         ),
-        home: Shell(
+        home: Inbox(
           yours: yours,
           following: following,
         ),

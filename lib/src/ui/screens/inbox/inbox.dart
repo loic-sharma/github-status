@@ -5,8 +5,8 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'issue_list.dart';
 
-class Shell extends StatelessWidget {
-  const Shell({super.key, required this.yours, required this.following});
+class Inbox extends StatelessWidget {
+  const Inbox({super.key, required this.yours, required this.following});
 
   final YoursModel yours;
   final SimpleIssueSearchTabModel following;

@@ -7,7 +7,7 @@ import 'package:gh_status/primer.dart' as primer;
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-import 'link.dart';
+import '../../link.dart';
 
 class IssueListAccordion extends StatelessWidget {
   const IssueListAccordion({
