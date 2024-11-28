@@ -3,9 +3,11 @@ import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 import 'package:gh_status/github.dart' as github;
 import 'package:gh_status/src/screens/inbox.dart';
+import 'package:gh_status/src/screens/login.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'src/foundation/timeago.dart';
+import 'src/screens/login/device_flow.dart';
 
 const client = github.GitHub(token: 'TODO');
 
@@ -43,10 +45,15 @@ class MyApp extends StatelessWidget {
           // Example of custom font family
           // textTheme: ShadTextTheme(family: 'UbuntuMono'),
         ),
+
+        home: Login(
+          model: DeviceFlowModel.run('TODO', 'TODO'),
+        ),
+        /*
         home: Inbox(
           yours: yours,
           following: following,
-        ),
+        ),*/
       ),
     );
   }

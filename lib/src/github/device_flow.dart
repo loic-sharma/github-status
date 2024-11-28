@@ -115,6 +115,8 @@ Future<_DeviceAuthorizationResponse> _authorizeDevice(
    ..headers['Accept'] = 'application/json'
    ..body = 'client_id=$clientId&scope=repo+notifications+read:org';
 
+  // TODO: Handle errors.
+  // 404 response if client ID unknown.
   final response = await client.send(request);
   if (response.statusCode != 200) {
     throw 'Unexpected device flow response: ${response.statusCode}\n${response.reasonPhrase}}}';

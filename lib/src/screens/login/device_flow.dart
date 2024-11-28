@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../github/device_flow.dart' as auth;
 
 class DeviceFlowModel with ChangeNotifier {
-  DeviceFlowModel(this._githubClientId, this._githubClientSecret);
+  DeviceFlowModel._(this._githubClientId, this._githubClientSecret);
 
   final String _githubClientId;
   final String _githubClientSecret;
@@ -22,7 +22,7 @@ class DeviceFlowModel with ChangeNotifier {
     String githubClientId,
     String githubClientSecret,
   ) {
-    final result = DeviceFlowModel(githubClientId, githubClientSecret);
+    final result = DeviceFlowModel._(githubClientId, githubClientSecret);
     unawaited(result._authenticate());
     return result;
   }
