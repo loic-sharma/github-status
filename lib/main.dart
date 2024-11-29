@@ -6,13 +6,9 @@ import 'package:gh_status/src/screens/inbox.dart';
 import 'package:gh_status/src/screens/login.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import 'src/config.dart';
 import 'src/foundation/timeago.dart';
 import 'src/screens/login/device_flow.dart';
-
-const client = github.GitHub(token: 'TODO');
-
-YoursTab yours = createYoursModel(client);
-FollowingTab following = createFollowingModel(client);
 
 void main() async {
   registerTimeago();
@@ -46,15 +42,79 @@ class MyApp extends StatelessWidget {
           // textTheme: ShadTextTheme(family: 'UbuntuMono'),
         ),
 
-        home: Login(
-          model: DeviceFlowModel.run('TODO', 'TODO'),
-        ),
-        /*
-        home: Inbox(
-          yours: yours,
-          following: following,
-        ),*/
+        home: MyAppHome(),
       ),
     );
   }
+}
+
+class MyAppHome extends StatefulWidget {
+  const MyAppHome({super.key});
+
+  @override
+  State<MyAppHome> createState() => _MyAppHomeState();
+}
+
+class _MyAppHomeState extends State<MyAppHome> {
+  late PageModel model;
+
+  @override
+  void initState() {
+    super.initState();
+
+    model = LoginPageModel(
+      DeviceFlowModel.run(
+        Config.githubClientId,
+        Config.githubClientSecret,
+        onCompleted: _onLogin,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (model) {
+      LoginPageModel(: final deviceFlowModel) => Login(model: deviceFlowModel),
+
+      InboxPageModel(: final yoursModel, : final followingModel) => Inbox(
+        yours: yoursModel,
+        following: followingModel,
+      ),
+    };
+  }
+
+  void _onLogin(String accessToken) {
+    if (!mounted) return;
+
+    setState(() {
+      final client = github.GitHub(token: accessToken);
+      model = InboxPageModel(
+        client: client,
+        yoursModel: createYoursModel(client),
+        followingModel: createFollowingModel(client),
+      );
+    });
+  }
+}
+
+sealed class PageModel {
+  const PageModel();
+}
+
+class LoginPageModel extends PageModel {
+  const LoginPageModel(this.deviceFlowModel);
+
+  final DeviceFlowModel deviceFlowModel;
+}
+
+class InboxPageModel extends PageModel {
+  const InboxPageModel({
+    required this.client,
+    required this.yoursModel,
+    required this.followingModel,
+  });
+
+  final github.GitHub client;
+  final YoursTab yoursModel;
+  final FollowingTab followingModel;
 }

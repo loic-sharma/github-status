@@ -5,11 +5,18 @@ import 'package:http/http.dart' as http;
 
 import '../../github/device_flow.dart' as auth;
 
+typedef OnCompletedCallback = void Function(String accessToken);
+
 class DeviceFlowModel with ChangeNotifier {
-  DeviceFlowModel._(this._githubClientId, this._githubClientSecret);
+  DeviceFlowModel._(
+    this._githubClientId,
+    this._githubClientSecret,
+    this._onCompleted,
+  );
 
   final String _githubClientId;
   final String _githubClientSecret;
+  final OnCompletedCallback? _onCompleted;
 
   DeviceFlowState get state => _state;
   DeviceFlowState _state = const StartingState();
@@ -20,9 +27,10 @@ class DeviceFlowModel with ChangeNotifier {
 
   factory DeviceFlowModel.run(
     String githubClientId,
-    String githubClientSecret,
-  ) {
-    final result = DeviceFlowModel._(githubClientId, githubClientSecret);
+    String githubClientSecret, {
+    OnCompletedCallback? onCompleted,
+  }) {
+    final result = DeviceFlowModel._(githubClientId, githubClientSecret, onCompleted);
     unawaited(result._authenticate());
     return result;
   }
@@ -53,6 +61,7 @@ class DeviceFlowModel with ChangeNotifier {
 
           case auth.SuccessResult(: final accessToken):
             _state = CompletedState(accessToken: accessToken);
+            _onCompleted?.call(accessToken);
             notifyListeners();
             return;
 

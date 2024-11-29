@@ -21,7 +21,7 @@ class Login extends StatelessWidget {
       child: switch (model.state) {
         StartingState _ => const Text('Starting...'),
         ErrorState(: var error) => const Text('Error'),
-        CompletedState(: var accessToken) => const Text('Completed'),
+        CompletedState _ => const Text('Completed'),
         WaitingState(: final verificationUri, : final userCode) => _Waiting(
           nextRefreshSeconds: model.nextRefreshSeconds,
           verificationUri: verificationUri,
