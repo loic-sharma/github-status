@@ -53,10 +53,12 @@ class DeviceFlowModel with ChangeNotifier {
 
           case auth.SuccessResult(: final accessToken):
             _state = CompletedState(accessToken: accessToken);
+            notifyListeners();
             return;
 
           case auth.ErrorResult():
             _state = ErrorState(error: result);
+            notifyListeners();
             return;
         }
       }

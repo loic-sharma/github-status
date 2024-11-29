@@ -1,8 +1,8 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_octicons/flutter_octicons.dart';
-import 'package:gh_status/main.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../../ui/link.dart';
@@ -50,7 +50,7 @@ class _Waiting extends material.StatelessWidget {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [    
+      children: [
         RichText(
           text: TextSpan(
             children: [
@@ -72,7 +72,7 @@ class _Waiting extends material.StatelessWidget {
           children: [
             IntrinsicWidth(
               child: ShadInputFormField(
-                initialValue: 'ABCD-EFGH',
+                initialValue: userCode,
                 readOnly: true,
               ),
             ),
@@ -81,6 +81,9 @@ class _Waiting extends material.StatelessWidget {
               onPressed: () {},
               icon: const Icon(material.Icons.copy, size: 16),
               child: const Text('Copy'),
+              onTapUp: (value) {
+                Clipboard.setData(ClipboardData(text: userCode));
+              },
             ),
           ],
         ),
