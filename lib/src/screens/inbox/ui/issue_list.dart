@@ -135,7 +135,7 @@ class IssueTile extends StatelessWidget {
             uri: uri,
             child: Text(
               title,
-              style: TextStyle(overflow: TextOverflow.ellipsis),
+              style: const TextStyle(overflow: TextOverflow.ellipsis),
             ),
           ),
         ),

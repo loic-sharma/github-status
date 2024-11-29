@@ -86,7 +86,7 @@ class YoursTabContent extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ShadAccordion.multiple(
-            initialValue: ['created', 'review-requests', 'mentioned', 'assigned'],
+            initialValue: const ['created', 'review-requests', 'mentioned', 'assigned'],
             children: [
               IssueListAccordion(
                 accordionKey: 'created',

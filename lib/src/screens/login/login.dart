@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_octicons/flutter_octicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../../../ui/link.dart';
-import '../device_flow.dart';
+import '../../ui/link.dart';
+import 'device_flow.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key, required this.model});
@@ -20,7 +20,8 @@ class Login extends StatelessWidget {
     return _LoginLayout(
       child: switch (model.state) {
         StartingState _ => const Text('Starting...'),
-        ErrorState(: var error) => const Text('Error'),
+        // TODO: Improve error handling.
+        ErrorState _ => const Text('Error'),
         CompletedState _ => const Text('Completed'),
         WaitingState(: final verificationUri, : final userCode) => _Waiting(
           nextRefreshSeconds: model.nextRefreshSeconds,
