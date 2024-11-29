@@ -7,6 +7,7 @@ import 'package:gh_status/primer.dart' as primer;
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../../ui/avatar.dart';
 import '../../../ui/link.dart';
 import '../models.dart' as models;
 
@@ -174,34 +175,3 @@ class IssueTile extends StatelessWidget {
   }
 }
 
-class AvatarIcon extends StatelessWidget {
-  const AvatarIcon({
-    super.key,
-    required this.iconUri,
-    required this.userUri,
-    double? size,
-  }) : size = size ?? 12.0;
-
-  final Uri iconUri;
-  final Uri userUri;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Link(
-      uri: userUri,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: SizedBox.fromSize(
-          size: const Size.fromRadius(12),
-          child: Image.network(
-            iconUri.toString(),
-            fit: BoxFit.cover,
-            width: size,
-            height: size,
-          ),
-        ),
-      ),
-    );
-  }
-}
