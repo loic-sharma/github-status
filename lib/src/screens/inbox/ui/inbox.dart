@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gh_status/foundation.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../settings/settings.dart';
 import 'issue_list.dart';
 import '../models.dart' as models;
 
@@ -43,6 +44,11 @@ class Inbox extends StatelessWidget {
                 DataValue(: var value) => Text('Following (${value.results})'),
               },
             ),
+            const ShadTab(
+              value: 'settings',
+              content: Settings(),
+              child: Text('Settings'),
+            )
           ],
         ),
       ),

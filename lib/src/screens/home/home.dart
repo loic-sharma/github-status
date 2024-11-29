@@ -6,7 +6,7 @@ import '../inbox/logic.dart';
 import '../inbox/models.dart';
 import '../inbox/ui/inbox.dart';
 import '../login/device_flow.dart';
-import '../login/ui/login.dart';
+import '../login/login.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,13 +16,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late PageModel model;
+  late _PageModel model;
 
   @override
   void initState() {
     super.initState();
 
-    model = LoginPageModel(
+    model = _LoginPageModel(
       DeviceFlowModel.run(
         Config.githubClientId,
         Config.githubClientSecret,
@@ -34,9 +34,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return switch (model) {
-      LoginPageModel(: final deviceFlowModel) => Login(model: deviceFlowModel),
+      _LoginPageModel(: final deviceFlowModel) => Login(model: deviceFlowModel),
 
-      InboxPageModel(: final yoursModel, : final followingModel) => Inbox(
+      _InboxPageModel(: final yoursModel, : final followingModel) => Inbox(
         yours: yoursModel,
         following: followingModel,
       ),
@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       final client = github.GitHub(token: accessToken);
-      model = InboxPageModel(
+      model = _InboxPageModel(
         client: client,
         yoursModel: createYoursModel(client),
         followingModel: createFollowingModel(client),
@@ -57,18 +57,18 @@ class _HomeState extends State<Home> {
   }
 }
 
-sealed class PageModel {
-  const PageModel();
+sealed class _PageModel {
+  const _PageModel();
 }
 
-class LoginPageModel extends PageModel {
-  const LoginPageModel(this.deviceFlowModel);
+class _LoginPageModel extends _PageModel {
+  const _LoginPageModel(this.deviceFlowModel);
 
   final DeviceFlowModel deviceFlowModel;
 }
 
-class InboxPageModel extends PageModel {
-  const InboxPageModel({
+class _InboxPageModel extends _PageModel {
+  const _InboxPageModel({
     required this.client,
     required this.yoursModel,
     required this.followingModel,
