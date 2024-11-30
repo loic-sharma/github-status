@@ -1,10 +1,17 @@
+import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
+import 'package:gh_status/foundation.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../../ui.dart';
 import '../../ui/avatar.dart';
+import 'following_tile.dart';
+import 'model.dart';
 
 class Settings extends StatelessWidget {
-  const Settings({super.key});
+  Settings({super.key});
+
+  final SettingsModel model = SettingsModel();
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +21,11 @@ class Settings extends StatelessWidget {
         children: [
           const SizedBox(height: 8.0),
 
-          GitHubSettings(),
+          GitHubSettings(model: model.profile),
 
           const SizedBox(height: 32.0),
 
-          FollowingSettings(),
+          FollowingSettings(model: model),
         ],
       ),
     );
@@ -26,10 +33,19 @@ class Settings extends StatelessWidget {
 }
 
 class GitHubSettings extends StatelessWidget {
-  const GitHubSettings({super.key});
+  const GitHubSettings({
+    super.key,
+    required this.model,
+    this.onLogout,
+  });
+
+  final AsyncValueListenable<ProfileModel> model;
+  final VoidCallback? onLogout;
 
   @override
   Widget build(BuildContext context) {
+    model.watch(context);
+
     final theme = ShadTheme.of(context);
 
     return Column(
@@ -40,28 +56,37 @@ class GitHubSettings extends StatelessWidget {
           style: theme.textTheme.list.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8.0),
-        Row(
-          children: [
-            AvatarIcon(
-              iconUri: Uri.parse('https://avatars.githubusercontent.com/u/737941?v=4'),
-              userUri: Uri.parse('https://github.com/loic-sharma'),
-              size: 32.0,
-            ),
-            const SizedBox(width: 8.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Loic Sharma'),
-                Text('@loic-sharma'),
-              ],
-            ),
-          ],
-        ),
+
+        switch (model.value) {
+          LoadingValue _ => const CircularProgressIndicator(),
+          ErrorValue _ => const Text('Error loading profile.'),
+          DataValue(value: final profile) => Row(
+            children: [
+              AvatarIcon(
+                iconUri: profile.avatar,
+                userUri: profile.uri,
+                size: 32.0,
+              ),
+              const SizedBox(width: 8.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Link(
+                    uri: profile.uri,
+                    child: Text(profile.name),
+                  ),
+                  Link(
+                    uri: profile.uri,
+                    child: Text('@${profile.login}'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        },
         const SizedBox(height: 8.0),
         ShadButton.outline(
-          onPressed: () {
-            // TODO: Logout
-          },
+          onPressed: () => onLogout?.call(),
           icon: const Icon(Icons.logout, size: 16.0),
           child: const Text('Logout'),
         ),
@@ -71,7 +96,9 @@ class GitHubSettings extends StatelessWidget {
 }
 
 class FollowingSettings extends StatelessWidget {
-  const FollowingSettings({super.key});
+  const FollowingSettings({super.key, required this.model});
+
+  final SettingsModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -86,36 +113,16 @@ class FollowingSettings extends StatelessWidget {
         ),
         const SizedBox(height: 8.0),
 
-        for (final user in ['cbracken', 'cbracken', 'cbracken'])
-          Row(
-            children: [
-              Expanded(child: ShadInput(initialValue: user,)),
-              ShadButton.outline(
-                onPressed: () {
-                  // TODO: Open user profile in browser.
-                },
-                icon: const Icon(Icons.open_in_new, size: 12.0),
-              ),
-            ],
-          ),
+        for (final user in model.following)
+          FollowingTile(user: user),
 
-        Row(
-          children: [
-            ShadButton.outline(
-              onPressed: () {
-                // TODO: Add new field
-              },
-              icon: const Icon(Icons.add, size: 16.0,),
-              child: const Text('Add'),
-            ),
-            ShadButton(
-              onPressed: () {
-                // TODO: Save changes
-              },
-              icon: const Icon(Icons.save, size: 16.0),
-              child: const Text('Save'),
-            ),
-          ],
+
+        ShadButton.outline(
+          onPressed: () {
+            // TODO: Add new field
+          },
+          icon: const Icon(Icons.add, size: 16.0,),
+          child: const Text('Add'),
         ),
       ],
     );
