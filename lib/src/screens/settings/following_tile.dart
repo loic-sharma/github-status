@@ -9,7 +9,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import '../../ui/avatar.dart';
 import 'model.dart';
 
-class FollowingTile extends StatefulWidget {
+class FollowingTile extends StatelessWidget {
   const FollowingTile({
     super.key,
     required this.user,
@@ -17,108 +17,132 @@ class FollowingTile extends StatefulWidget {
     this.onDeleted,
   });
 
-  final GitHubUser user;
+  final FollowedUser user;
   final void Function(String)? onUpdated;
   final VoidCallback? onDeleted;
 
   @override
-  State<FollowingTile> createState() => _FollowingTileState();
-}
-
-class _FollowingTileState extends State<FollowingTile> {
-  var _editing = false;
-
-  @override
   Widget build(BuildContext context) {
-    return _editing
-      ? _UserForm(
-          user: widget.user.login,
-          onSaved: (username) {
-            // TODO:
-            setState(() {
-              _editing = false;
-            });
-          },
-          onCancel: () => setState(() => _editing = false),
-        )
-      : _UserTile(
-          user: widget.user,
-          onEdited: () => setState(() => _editing = true),
-          onDeleted: widget.onDeleted,
-        );
+    return switch (user) {
+      ViewUser viewUser => _UserTile(
+        login: viewUser.login,
+        iconUri: viewUser.avatarUri,
+        profileUri: viewUser.profileUri,
+        onEdited: viewUser.edit,
+        onDeleted: viewUser.delete,
+      ),
+
+      AddUser addUser => _EditUser(
+        initialLogin: '',
+        onSaved: addUser.save,
+        onCancel: addUser.cancel,
+      ),
+
+      EditUser editUser => _EditUser(
+        initialLogin: editUser.initialLogin,
+        onSaved: editUser.save,
+        onCancel: editUser.cancel,
+      ),
+    };
   }
 }
 
 class _UserTile extends StatelessWidget {
   const _UserTile({
     super.key,
-    required this.user,
+    required this.login,
+    required this.iconUri,
+    required this.profileUri,
     this.onEdited,
     this.onDeleted,
   });
 
-  final GitHubUser user;
+  final String login;
+  final Uri iconUri;
+  final Uri profileUri;
+
   final VoidCallback? onEdited;
   final VoidCallback? onDeleted;
-  
+
   @override
   Widget build(BuildContext context) {
-    user.watch(context);
-
     return Row(
       children: [
-        switch (user.avatar) {
-          DataValue<Uri>(value: final iconUri) => AvatarIcon(
-            iconUri: iconUri,
-            userUri: user.uri,
-          ),
-          // TODO
-          _ => const CircularProgressIndicator(),
-        },
+        AvatarIcon(
+          iconUri: iconUri,
+          userUri: profileUri,
+        ),
 
         const SizedBox(width: 8.0),
 
         Expanded(
           child: Link(
-            uri: user.uri,
-            child: Text(user.login),
+            uri: profileUri,
+            child: Text(login),
           ),
+        ),
+
+        ShadButton.outline(
+          onPressed: onDeleted,
+          icon: const Icon(Icons.delete, size: 12.0),
         ),
 
         ShadButton.outline(
           icon: const Icon(Icons.edit, size: 12.0),
           onPressed: onEdited,
         ),
-
-        ShadButton.destructive(
-          onPressed: onDeleted,
-          icon: const Icon(Icons.delete, size: 12.0),
-        ),
       ],
     );
   }
 }
 
-class _UserForm extends StatelessWidget {
-  _UserForm({
+class _EditUser extends StatefulWidget {
+  const _EditUser({
     super.key,
-    required this.user,
+    required this.initialLogin,
     this.onSaved,
     this.onCancel,
   });
 
-  String user;
-  void Function(String)? onSaved;
-  VoidCallback? onCancel;
+  final String initialLogin;
+  final void Function(String)? onSaved;
+  final VoidCallback? onCancel;
+
+  @override
+  State<_EditUser> createState() => _EditUserState();
+}
+
+class _EditUserState extends State<_EditUser> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialLogin);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: ShadInput(initialValue: user,)),
+        Expanded(
+          child: ShadInput(controller: _controller),
+        ),
+
+        ShadButton.outline(
+          onPressed: () => widget.onCancel?.call(),
+          icon: const Icon(Icons.cancel, size: 12.0),
+          child: const Text('Cancel'),
+        ),
 
         ShadButton(
-          onPressed: () => onSaved?.call(user),
+          onPressed: () => widget.onSaved?.call(_controller.text),
           icon: const Icon(Icons.save, size: 12.0),
           child: const Text('Save'),
         ),

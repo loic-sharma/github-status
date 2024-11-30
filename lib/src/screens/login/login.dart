@@ -99,7 +99,7 @@ class _Waiting extends StatelessWidget {
                 readOnly: true,
               ),
             ),
-    
+
             ShadButton.secondary(
               onPressed: () {},
               icon: const Icon(material.Icons.copy, size: 16),

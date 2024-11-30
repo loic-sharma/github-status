@@ -113,16 +113,27 @@ class FollowingSettings extends StatelessWidget {
         ),
         const SizedBox(height: 8.0),
 
-        for (final user in model.following)
-          FollowingTile(user: user),
+        ListenableBuilder(
+          listenable: model.following,
+          builder: (context, _) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final user in model.following.users)
+                FollowingTile(user: user),
+            ],
+          ),
+        ),
 
-
-        ShadButton.outline(
-          onPressed: () {
-            // TODO: Add new field
-          },
-          icon: const Icon(Icons.add, size: 16.0,),
-          child: const Text('Add'),
+        Row(
+          children: [
+              ShadButton.outline(
+              onPressed: () {
+                model.following.addUser();
+              },
+              icon: const Icon(Icons.add, size: 16.0,),
+              child: const Text('Add'),
+            ),
+          ],
         ),
       ],
     );
