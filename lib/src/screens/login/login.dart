@@ -5,13 +5,35 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_octicons/flutter_octicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../config.dart';
 import '../../ui/link.dart';
 import 'device_flow.dart';
 
-class Login extends StatelessWidget {
-  const Login({super.key, required this.model});
+class Login extends StatefulWidget {
+  const Login({
+    super.key,
+    this.onLogin,
+  });
 
-  final DeviceFlowModel model;
+  final OnCompletedCallback? onLogin;
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  late DeviceFlowModel model;
+
+  @override
+  void initState() {
+    super.initState();
+
+    model = DeviceFlowModel.run(
+      Config.githubClientId,
+      Config.githubClientSecret,
+      onCompleted: widget.onLogin,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +55,7 @@ class Login extends StatelessWidget {
   }
 }
 
-class _Waiting extends material.StatelessWidget {
+class _Waiting extends StatelessWidget {
   const _Waiting({
     super.key,
     required this.nextRefreshSeconds,
@@ -46,7 +68,7 @@ class _Waiting extends material.StatelessWidget {
   final String userCode;
 
   @override
-  Widget build(material.BuildContext context) {
+  Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
 
     return Column(
@@ -65,9 +87,9 @@ class _Waiting extends material.StatelessWidget {
             ],
           ),
         ),
-    
+
         const SizedBox(height: 10),
-    
+
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

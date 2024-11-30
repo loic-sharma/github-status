@@ -1,11 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:gh_status/github.dart' as github;
 
-import '../../config.dart';
 import '../inbox/logic.dart';
 import '../inbox/models.dart';
 import '../inbox/ui/inbox.dart';
-import '../login/device_flow.dart';
 import '../login/login.dart';
 
 class Home extends StatefulWidget {
@@ -16,25 +14,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late _PageModel model;
-
-  @override
-  void initState() {
-    super.initState();
-
-    model = _LoginPageModel(
-      DeviceFlowModel.run(
-        Config.githubClientId,
-        Config.githubClientSecret,
-        onCompleted: _onLogin,
-      ),
-    );
-  }
+  _PageModel model = const _LoginPageModel();
 
   @override
   Widget build(BuildContext context) {
     return switch (model) {
-      _LoginPageModel(: final deviceFlowModel) => Login(model: deviceFlowModel),
+      _LoginPageModel _ => Login(onLogin: _onLogin),
 
       _InboxPageModel(: final yoursModel, : final followingModel) => Inbox(
         yours: yoursModel,
@@ -62,9 +47,7 @@ sealed class _PageModel {
 }
 
 class _LoginPageModel extends _PageModel {
-  const _LoginPageModel(this.deviceFlowModel);
-
-  final DeviceFlowModel deviceFlowModel;
+  const _LoginPageModel();
 }
 
 class _InboxPageModel extends _PageModel {
