@@ -7,29 +7,37 @@ import '../../settings/settings.dart';
 import 'issue_list.dart';
 import '../models.dart' as models;
 
-class Inbox extends StatelessWidget {
+class Inbox extends StatefulWidget {
   const Inbox({super.key, required this.yours, required this.following});
 
   final models.YoursTab yours;
   final models.FollowingTab following;
 
   @override
+  State<Inbox> createState() => _InboxState();
+}
+
+class _InboxState extends State<Inbox> {
+  String tab = 'yours';
+
+  @override
   Widget build(BuildContext context) {
-    yours.total.watch(context);
-    following.watch(context);
+    widget.yours.total.watch(context);
+    widget.following.watch(context);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
         child: ShadTabs<String>(
-          value: 'yours',
+          value: tab,
           tabBarConstraints: const BoxConstraints(maxWidth: 800),
           contentConstraints: const BoxConstraints(maxWidth: 800),
           tabs: [
             ShadTab(
               value: 'yours',
-              content: YoursTabContent(yours: yours),
-              child: switch(yours.total.value) {
+              content: YoursTabContent(yours: widget.yours),
+              onPressed: () => setState(() => tab = 'yours'),
+              child: switch (widget.yours.total.value) {
                 LoadingValue _ => const Text('Yours (...)'),
                 ErrorValue _ => const Text('Yours'),
                 DataValue(: var value) => Text('Yours ($value)'),
@@ -37,17 +45,19 @@ class Inbox extends StatelessWidget {
             ),
             ShadTab(
               value: 'team',
-              content: FollowingTabContent(following: following),
-              child: switch(following.items) {
+              content: FollowingTabContent(following: widget.following),
+              onPressed: () => setState(() => tab = 'team'),
+              child: switch (widget.following.items) {
                 LoadingValue _ => const Text('Following (...)'),
                 ErrorValue _ => const Text('Following'),
                 DataValue(: var value) => Text('Following (${value.results})'),
               },
             ),
-            const ShadTab(
+            ShadTab(
               value: 'settings',
               content: Settings(),
-              child: Text('Settings'),
+              onPressed: () => setState(() => tab = 'settings'),
+              child: const Text('Settings'),
             )
           ],
         ),
