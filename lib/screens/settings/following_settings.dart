@@ -7,6 +7,51 @@ import '../../ui/avatar.dart';
 import '../../ui/link.dart';
 import 'model.dart';
 
+class FollowingSettings extends StatelessWidget {
+  const FollowingSettings({super.key, required this.model});
+
+  final SettingsModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = ShadTheme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Following',
+          style: theme.textTheme.list.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8.0),
+
+        ListenableBuilder(
+          listenable: model.following,
+          builder: (context, _) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final user in model.following.users)
+                FollowingTile(user: user),
+            ],
+          ),
+        ),
+
+        Row(
+          children: [
+              ShadButton.outline(
+              onPressed: () {
+                model.following.addUser();
+              },
+              icon: const Icon(material.Icons.add, size: 16.0,),
+              child: const Text('Add'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class FollowingTile extends StatelessWidget {
   const FollowingTile({
     super.key,
