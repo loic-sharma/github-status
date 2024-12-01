@@ -4,12 +4,14 @@ import 'package:gh_status/foundation/foundation.dart';
 import 'package:gh_status/github/github.dart' as github;
 
 class SettingsModel {
-  SettingsModel(github.GitHub client)
+  SettingsModel(github.GitHub client, {VoidCallback? onLogout})
     : _client = client,
+      _onLogout = onLogout,
       _profile = AsyncValueNotifier(const LoadingValue<ProfileModel>()),
       following = FollowingModel();
 
   final github.GitHub _client;
+  final VoidCallback? _onLogout;
 
   AsyncValueListenable<ProfileModel> get profile => _profile;
   final AsyncValueNotifier<ProfileModel> _profile;
@@ -35,7 +37,7 @@ class SettingsModel {
     };
   }
 
-  void logout() {}
+  void logout() => _onLogout?.call();
 }
 
 class ProfileModel {

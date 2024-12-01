@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:gh_status/github/github.dart' as github;
+import 'package:gh_status/screens/settings/model.dart';
 
 import '../inbox/logic.dart';
 import '../inbox/models.dart';
@@ -25,6 +26,7 @@ class _HomeState extends State<Home> {
         client: model.client,
         yours: model.yoursModel,
         following: model.followingModel,
+        settings: model.settingsModel,
       ),
     };
   }
@@ -38,7 +40,16 @@ class _HomeState extends State<Home> {
         client: client,
         yoursModel: createYoursModel(client),
         followingModel: createFollowingModel(client),
+        settingsModel: SettingsModel(client, onLogout: _onLogout),
       );
+    });
+  }
+
+  void _onLogout() {
+    if (!mounted) return;
+
+    setState(() {
+      model = const _LoginPageModel();
     });
   }
 }
@@ -56,9 +67,11 @@ class _InboxPageModel extends _PageModel {
     required this.client,
     required this.yoursModel,
     required this.followingModel,
+    required this.settingsModel,
   });
 
   final github.GitHub client;
   final YoursTab yoursModel;
   final FollowingTab followingModel;
+  final SettingsModel settingsModel;
 }

@@ -15,11 +15,13 @@ class Inbox extends StatefulWidget {
     required this.client,
     required this.yours,
     required this.following,
+    required this.settings,
   });
 
   final github.GitHub client;
   final models.YoursTab yours;
   final models.FollowingTab following;
+  final SettingsModel settings;
 
   @override
   State<Inbox> createState() => _InboxState();
@@ -27,15 +29,6 @@ class Inbox extends StatefulWidget {
 
 class _InboxState extends State<Inbox> {
   String tab = 'yours';
-
-  // TODO: Don't initialize settings mdoel here.
-  late SettingsModel settingsModel;
-
-  @override
-  void initState() {
-    super.initState();
-     settingsModel = SettingsModel(widget.client);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +65,7 @@ class _InboxState extends State<Inbox> {
             ),
             ShadTab(
               value: 'settings',
-              content: Settings(model: settingsModel),
+              content: Settings(model: widget.settings),
               onPressed: () => setState(() => tab = 'settings'),
               child: const Text('Settings'),
             )
