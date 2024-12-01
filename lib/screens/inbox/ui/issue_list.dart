@@ -1,9 +1,9 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter/widgets.dart';
-import 'package:gh_status/foundation.dart';
-import 'package:gh_status/github.dart' as github;
-import 'package:gh_status/primer.dart' as primer;
+import 'package:gh_status/foundation/foundation.dart';
+import 'package:gh_status/github/github.dart' as github;
+import 'package:gh_status/primer/primer.dart' as primer;
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:timeago/timeago.dart' as timeago;
 

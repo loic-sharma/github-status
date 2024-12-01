@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_octicons/flutter_octicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../../config.dart';
+import '../../config/config.dart';
 import '../../ui/link.dart';
 import 'device_flow.dart';
 

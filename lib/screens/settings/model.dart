@@ -1,7 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
-import 'package:gh_status/foundation.dart';
+import 'package:gh_status/foundation/foundation.dart';
 
 class SettingsModel {
 

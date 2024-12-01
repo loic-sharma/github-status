@@ -3,8 +3,8 @@ import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'src/foundation/timeago.dart';
-import 'src/screens/home/home.dart';
+import 'foundation/timeago.dart';
+import 'screens/home/home.dart';
 
 void main() async {
   registerTimeago();

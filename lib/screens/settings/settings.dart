@@ -1,10 +1,9 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
-import 'package:gh_status/src/foundation/foundation.dart';
+import 'package:gh_status/foundation/foundation.dart';
+import 'package:gh_status/ui/ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../../ui/avatar.dart';
-import '../../ui/link.dart';
 import 'following_tile.dart';
 import 'model.dart';
 

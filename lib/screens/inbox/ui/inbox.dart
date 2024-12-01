@@ -1,6 +1,6 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gh_status/foundation.dart';
+import 'package:gh_status/foundation/foundation.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../settings/settings.dart';

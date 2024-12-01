@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:gh_status/foundation.dart';
-import 'package:gh_status/github.dart' as github;
+import 'package:gh_status/foundation/foundation.dart';
+import 'package:gh_status/github/github.dart' as github;
 
 class YoursTab {
   AsyncValueNotifier<int> total = ValueNotifier(const LoadingValue<int>());
