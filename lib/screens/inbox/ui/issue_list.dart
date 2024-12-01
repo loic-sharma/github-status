@@ -112,69 +112,74 @@ class IssueTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ShadTheme.of(context);
     const spacer = SizedBox(width: 6.0);
 
-    return Row(
-      children: [
-        AvatarIcon(
-          iconUri: authorAvatarUri,
-          userUri: uri,
-        ),
-
-        spacer,
-
-        Link(
-          uri: uri,
-          child: primer.IssueIcon(
-            type: type,
-            state: state,
-            isDraft: isDraft,
-            size: 16.0,
+    return ShadResponsiveBuilder(
+      builder: (context, breakpoint) => Row(
+        children: [
+          AvatarIcon(
+            iconUri: authorAvatarUri,
+            userUri: uri,
           ),
-        ),
-    
-        spacer,
-    
-        Expanded(
-          child: Link(
-            uri: uri,
-            child: Text(
-              title,
-              style: const TextStyle(overflow: TextOverflow.ellipsis),
-            ),
-          ),
-        ),
 
-        if (reviewDecision != null && reviewDecision != github.ReviewDecision.reviewRequired) ...[
           spacer,
 
           Link(
             uri: uri,
-            child: switch (reviewDecision) {
-              github.ReviewDecision.approved => const primer.IssueLabel(
-                name: 'Approved',
-                color: primer.Colors.openForeground,
-              ),
-              github.ReviewDecision.changesRequested => const primer.IssueLabel(
-                name: 'Changes requested',
-                color: primer.Colors.closedForeground,
-              ),
-              _ => throw 'Unknown review decision $reviewDecision',
-            },
+            child: primer.IssueIcon(
+              type: type,
+              state: state,
+              isDraft: isDraft,
+              size: 16.0,
+            ),
           ),
-        ],
 
-        spacer,
-    
-        Link(
-          uri: uri,
-          child: Text(
-            // TODO: Format using "Now", 5m, 3h, 3d, 3mo, 3y, etc..
-            timeago.format(updatedAt),
-            style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
+          spacer,
+
+          Expanded(
+            child: Link(
+              uri: uri,
+              child: Text(
+                title,
+                style: const TextStyle(overflow: TextOverflow.ellipsis),
+              ),
+            ),
           ),
-        ),
-      ],
+
+          if (breakpoint >= theme.breakpoints.sm) ...[
+            if (reviewDecision != null && reviewDecision != github.ReviewDecision.reviewRequired) ...[
+              spacer,
+
+              Link(
+                uri: uri,
+                child: switch (reviewDecision) {
+                  github.ReviewDecision.approved => const primer.IssueLabel(
+                    name: 'Approved',
+                    color: primer.Colors.openForeground,
+                  ),
+                  github.ReviewDecision.changesRequested => const primer.IssueLabel(
+                    name: 'Changes requested',
+                    color: primer.Colors.closedForeground,
+                  ),
+                  _ => throw 'Unknown review decision $reviewDecision',
+                },
+              ),
+            ],
+
+            spacer,
+
+            Link(
+              uri: uri,
+              child: Text(
+                // TODO: Format using "Now", 5m, 3h, 3d, 3mo, 3y, etc..
+                timeago.format(updatedAt),
+                style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

@@ -55,9 +55,9 @@ class _InboxState extends State<Inbox> {
               content: YoursTabContent(yours: widget.yours),
               onPressed: () => setState(() => tab = 'yours'),
               child: switch (widget.yours.total.value) {
-                LoadingValue _ => const Text('Yours (...)'),
-                ErrorValue _ => const Text('Yours'),
-                DataValue(: var value) => Text('Yours ($value)'),
+                LoadingValue _ => const Text('Yours (...)', overflow: TextOverflow.ellipsis,),
+                ErrorValue _ => const Text('Yours', overflow: TextOverflow.ellipsis),
+                DataValue(: var value) => Text('Yours ($value)', overflow: TextOverflow.ellipsis),
               },
             ),
             ShadTab(
