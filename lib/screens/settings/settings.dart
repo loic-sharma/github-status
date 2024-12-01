@@ -34,7 +34,7 @@ class _SettingsState extends State<Settings> {
         children: [
           const SizedBox(height: 8.0),
 
-          GitHubSettings(model: widget.model.profile),
+          ProfileSettings(model: widget.model.profile),
 
           const SizedBox(height: 32.0),
 
@@ -45,8 +45,8 @@ class _SettingsState extends State<Settings> {
   }
 }
 
-class GitHubSettings extends StatelessWidget {
-  const GitHubSettings({
+class ProfileSettings extends StatelessWidget {
+  const ProfileSettings({
     super.key,
     required this.model,
     this.onLogout,
