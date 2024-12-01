@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:gh_status/foundation.dart';
-import 'package:gh_status/github.dart' as github;
+import 'package:gh_status/src/foundation/foundation.dart';
+import 'package:gh_status/src/github/github.dart' as github;
 
 import 'models.dart' as models;
 

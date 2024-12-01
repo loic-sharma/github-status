@@ -1,12 +1,10 @@
 
-import 'package:context_watch/context_watch.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter/widgets.dart';
-import 'package:gh_status/foundation.dart';
-import 'package:gh_status/ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../ui/avatar.dart';
+import '../../ui/link.dart';
 import 'model.dart';
 
 class FollowingTile extends StatelessWidget {
@@ -84,11 +82,11 @@ class _UserTile extends StatelessWidget {
 
         ShadButton.outline(
           onPressed: onDeleted,
-          icon: const Icon(Icons.delete, size: 12.0),
+          icon: const Icon(material.Icons.delete, size: 12.0),
         ),
 
         ShadButton.outline(
-          icon: const Icon(Icons.edit, size: 12.0),
+          icon: const Icon(material.Icons.edit, size: 12.0),
           onPressed: onEdited,
         ),
       ],
@@ -137,13 +135,13 @@ class _EditUserState extends State<_EditUser> {
 
         ShadButton.outline(
           onPressed: () => widget.onCancel?.call(),
-          icon: const Icon(Icons.cancel, size: 12.0),
+          icon: const Icon(material.Icons.cancel, size: 12.0),
           child: const Text('Cancel'),
         ),
 
         ShadButton(
           onPressed: () => widget.onSaved?.call(_controller.text),
-          icon: const Icon(Icons.save, size: 12.0),
+          icon: const Icon(material.Icons.save, size: 12.0),
           child: const Text('Save'),
         ),
       ],
