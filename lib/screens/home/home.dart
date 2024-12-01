@@ -21,9 +21,10 @@ class _HomeState extends State<Home> {
     return switch (model) {
       _LoginPageModel _ => Login(onLogin: _onLogin),
 
-      _InboxPageModel(: final yoursModel, : final followingModel) => Inbox(
-        yours: yoursModel,
-        following: followingModel,
+      _InboxPageModel model => Inbox(
+        client: model.client,
+        yours: model.yoursModel,
+        following: model.followingModel,
       ),
     };
   }

@@ -1,29 +1,44 @@
 import 'package:flutter/foundation.dart';
 import 'package:gh_status/foundation/foundation.dart';
 
-class SettingsModel {
+import 'package:gh_status/github/github.dart' as github;
 
-  SettingsModel()
-    : profile = ValueNotifier(
-        AsyncValue.data(
-          ProfileModel(
-            name: 'Loïc Sharma',
-            login: 'loic-sharma',
-            avatar: Uri.parse('https://avatars.githubusercontent.com/u/737941?v=4'),
-            uri: Uri.parse('https://github.com/loic-sharma'),
-          ),
-        ),
-      ),
+class SettingsModel {
+  SettingsModel(github.GitHub client)
+    : _client = client,
+      _profile = AsyncValueNotifier(const LoadingValue<ProfileModel>()),
       following = FollowingModel();
 
-  final AsyncValueListenable<ProfileModel> profile;
+  final github.GitHub _client;
+
+  AsyncValueListenable<ProfileModel> get profile => _profile;
+  final AsyncValueNotifier<ProfileModel> _profile;
 
   final FollowingModel following;
+
+  Future<void> loadProfile() async {
+    final userResult = await _client.user();
+
+    _profile.value = switch (userResult) {
+      github.OkResult(data: final user) =>
+        AsyncValue.data(ProfileModel(
+          name: user.name,
+          login: user.login,
+          avatar: user.avatarUrl,
+          uri: user.url,
+        )),
+
+      _ => AsyncValue.error(
+        error: 'Failed to load profile',
+        stackTrace: StackTrace.current,
+      ),
+    };
+  }
 
   void logout() {}
 }
 
-class ProfileModel with ChangeNotifier {
+class ProfileModel {
   ProfileModel({
     required this.name,
     required this.login,
@@ -37,7 +52,7 @@ class ProfileModel with ChangeNotifier {
   final Uri uri;
 }
 
-class FollowingModel with ChangeNotifier {
+class FollowingModel extends ChangeNotifier {
   FollowingModel() {
     _users[0] = ViewUser(model: this, id: 0, login: 'loic-sharma');
     _users[1] = ViewUser(model: this, id: 1, login: 'loic-sharma');

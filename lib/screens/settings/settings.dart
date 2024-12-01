@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 import 'package:gh_status/foundation/foundation.dart';
@@ -7,24 +9,36 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'following_tile.dart';
 import 'model.dart';
 
-class Settings extends StatelessWidget {
-  Settings({super.key});
+class Settings extends StatefulWidget {
+  const Settings({super.key, required this.model});
 
-  final SettingsModel model = SettingsModel();
+  final SettingsModel model;
+
+  @override
+  State<Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+  @override
+  void initState() {
+    super.initState();
+
+    unawaited(widget.model.loadProfile());
+  }
 
   @override
   Widget build(BuildContext context) {
     return ShadCard(
-      title: Text('Settings'),
+      title: const Text('Settings'),
       child: Column(
         children: [
           const SizedBox(height: 8.0),
 
-          GitHubSettings(model: model.profile),
+          GitHubSettings(model: widget.model.profile),
 
           const SizedBox(height: 32.0),
 
-          FollowingSettings(model: model),
+          FollowingSettings(model: widget.model),
         ],
       ),
     );

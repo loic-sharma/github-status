@@ -7,7 +7,7 @@ import '../../github/device_flow.dart' as auth;
 
 typedef OnCompletedCallback = void Function(String accessToken);
 
-class DeviceFlowModel with ChangeNotifier {
+class DeviceFlowModel extends ChangeNotifier {
   DeviceFlowModel._(
     this._githubClientId,
     this._githubClientSecret,

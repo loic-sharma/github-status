@@ -14,7 +14,7 @@ class YoursTab {
   AsyncValueNotifier<IssueSearch> assigned = ValueNotifier(const LoadingValue<IssueSearch>());
 }
 
-class FollowingTab with ChangeNotifier {
+class FollowingTab extends ChangeNotifier {
   AsyncValue<IssueSearch> get items => _items;
   AsyncValue<IssueSearch> _items = const LoadingValue<IssueSearch>();
   set items(AsyncValue<IssueSearch> value) {

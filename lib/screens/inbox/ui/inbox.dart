@@ -1,15 +1,22 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gh_status/foundation/foundation.dart';
+import 'package:gh_status/github/github.dart' as github;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../settings/model.dart';
 import '../../settings/settings.dart';
-import 'issue_list.dart';
 import '../models.dart' as models;
+import 'issue_list.dart';
 
 class Inbox extends StatefulWidget {
-  const Inbox({super.key, required this.yours, required this.following});
+  const Inbox({
+    super.key,
+    required this.client,
+    required this.yours,
+    required this.following});
 
+  final github.GitHub client;
   final models.YoursTab yours;
   final models.FollowingTab following;
 
@@ -19,6 +26,15 @@ class Inbox extends StatefulWidget {
 
 class _InboxState extends State<Inbox> {
   String tab = 'yours';
+
+  // TODO: Don't initialize settings mdoel here.
+  late SettingsModel settingsModel;
+
+  @override
+  void initState() {
+    super.initState();
+     settingsModel = SettingsModel(widget.client);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +71,7 @@ class _InboxState extends State<Inbox> {
             ),
             ShadTab(
               value: 'settings',
-              content: Settings(),
+              content: Settings(model: settingsModel),
               onPressed: () => setState(() => tab = 'settings'),
               child: const Text('Settings'),
             )
