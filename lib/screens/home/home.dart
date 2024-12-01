@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:gh_status/github.dart' as github;
+import 'package:gh_status/github/github.dart' as github;
 
 import '../inbox/logic.dart';
 import '../inbox/models.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_octicons/flutter_octicons.dart';
-import 'package:gh_status/github.dart' as github;
+import 'package:gh_status/github/github.dart' as github;
 
 import 'colors.dart';
 

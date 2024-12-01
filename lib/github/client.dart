@@ -3,14 +3,58 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import 'models.dart';
+import 'models/device_flow.dart';
+import 'models/issue_search.dart';
+import 'models/user.dart';
 
 class GitHub {
-  const GitHub({required String? token})
-    : assert(token != 'TODO'),
-      _token = token;
+  GitHub({String? token}) : _token = token;
 
-  final String? _token;
+  String? _token;
+  set token(String? value) {
+    _token = value;
+  }
+
+  Future<DeviceAuthorizationResponse> authorizeDevice(String clientId) async {
+    // TODO: Handle errors.
+    // 404 response if client ID unknown.
+    final response = await http.post(
+      Uri.parse('https://github.com/login/device/code'),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+      },
+      body: 'client_id=$clientId&scope=repo+notifications+read:org',
+    );
+    if (response.statusCode != 200) {
+      throw 'Unexpected device flow response: ${response.statusCode}\n${response.reasonPhrase}}}';
+    }
+
+    final bodyJson = json.decode(response.body) as Map<String, dynamic>;
+
+    return DeviceAuthorizationResponse.fromJson(bodyJson);
+  }
+
+  Future<UserAuthenticationResponse> authenticateUser(
+    String clientId,
+    String deviceCode,
+  ) async {
+    final response = await http.post(
+      Uri.parse('https://github.com/login/oauth/access_token'),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+      },
+      body: 'client_id=$clientId&device_code=$deviceCode&grant_type=urn:ietf:params:oauth:grant-type:device_code',
+    );
+    if (response.statusCode != 200) {
+      throw 'Unexpected access token response: ${response.statusCode}\n${response.reasonPhrase}}}';
+    }
+
+    final bodyJson = json.decode(response.body) as Map<String, dynamic>;
+
+    return UserAuthenticationResponse.fromJson(bodyJson);
+  }
 
   // https://docs.github.com/en/graphql/reference/queries#search
   Future<Result<IssueSearch>> searchIssues(
@@ -71,6 +115,7 @@ class GitHub {
     Map<String, dynamic>? queryParameters,
     String? body,
   ) async {
+    // TODO Cache client?
     var client = http.Client();
     try {
       // TODO Cancellation

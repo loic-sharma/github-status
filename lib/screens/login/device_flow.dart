@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 
+import '../../github/github.dart' as github;
 import '../../github/device_flow.dart' as auth;
 
 typedef OnCompletedCallback = void Function(String accessToken);
@@ -36,43 +36,39 @@ class DeviceFlowModel with ChangeNotifier {
   }
 
   Future<void> _authenticate() async {
-    final client = http.Client();
-    try {
-      final deviceFlow = await auth.DeviceFlow.start(
-        client,
-        _githubClientId,
-        _githubClientSecret,
-      );
+    final client = github.GitHub();
+    final deviceFlow = await auth.DeviceFlow.start(
+      client,
+      _githubClientId,
+      _githubClientSecret,
+    );
 
-      _state = WaitingState(
-        deviceFlow.verificationUri,
-        deviceFlow.userCode,
-      );
-      _startSleepCountdown(deviceFlow.sleepDuration);
+    _state = WaitingState(
+      deviceFlow.verificationUri,
+      deviceFlow.userCode,
+    );
+    _startSleepCountdown(deviceFlow.sleepDuration);
 
-      while (true) {
-        // Sleep then check the status of the device flow.
-        final result = await deviceFlow.check();
+    while (true) {
+      // Sleep then check the status of the device flow.
+      final result = await deviceFlow.check();
 
-        switch (result) {
-          case auth.WaitingResult():
-            _startSleepCountdown(deviceFlow.sleepDuration);
-            break;
+      switch (result) {
+        case auth.WaitingResult():
+          _startSleepCountdown(deviceFlow.sleepDuration);
+          break;
 
-          case auth.SuccessResult(: final accessToken):
-            _state = CompletedState(accessToken: accessToken);
-            _onCompleted?.call(accessToken);
-            notifyListeners();
-            return;
+        case auth.SuccessResult(: final accessToken):
+          _state = CompletedState(accessToken: accessToken);
+          _onCompleted?.call(accessToken);
+          notifyListeners();
+          return;
 
-          case auth.ErrorResult():
-            _state = ErrorState(error: result);
-            notifyListeners();
-            return;
-        }
+        case auth.ErrorResult():
+          _state = ErrorState(error: result);
+          notifyListeners();
+          return;
       }
-    } finally {
-      client.close();
     }
   }
 
