@@ -14,7 +14,8 @@ class Inbox extends StatefulWidget {
     super.key,
     required this.client,
     required this.yours,
-    required this.following});
+    required this.following,
+  });
 
   final github.GitHub client;
   final models.YoursTab yours;

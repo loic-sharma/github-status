@@ -32,7 +32,10 @@ class _SettingsState extends State<Settings> {
         children: [
           const SizedBox(height: 8.0),
 
-          ProfileSettings(model: widget.model.profile),
+          ProfileSettings(
+            model: widget.model.profile,
+            onLogout: widget.model.logout,
+          ),
 
           const SizedBox(height: 32.0),
 

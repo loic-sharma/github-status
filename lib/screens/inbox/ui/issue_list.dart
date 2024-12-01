@@ -27,6 +27,8 @@ class IssueListAccordion extends StatelessWidget {
   Widget build(BuildContext context) {
     model.watch(context);
 
+    final theme = ShadTheme.of(context);
+
     return ShadAccordionItem(
       value: accordionKey,
       title: Wrap(
@@ -39,7 +41,9 @@ class IssueListAccordion extends StatelessWidget {
               ErrorValue _ => '',
               DataValue(: var value) => '(${value.items.length.toString()})',
             },
-            style: TextStyle(color: ShadTheme.of(context).textTheme.muted.color),
+            style: theme.accordionTheme.titleStyle?.copyWith(
+              color: theme.textTheme.muted.color,
+            ),
           ),
         ],
       ),
